@@ -1,74 +1,75 @@
 const API_URL = 'http://127.0.0.1:8000';
-
-const authSection = document.getElementById('auth-section');
+const authContainer = document.getElementById('auth-container');
 const taskSection = document.getElementById('task-section');
+const authForm = document.getElementById('register-form');
+const switchBtn = document.getElementById('switch-to-login');
+
+let isLoginMode = false;
+
+const formTitle = document.querySelector('#auth-form-section h2');
+const submitBtn = authForm.querySelector('button');
+
+switchBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+
+    isLoginMode = !isLoginMode;
+
+    if (isLoginMode) {
+        formTitle.textContent = 'Log In to Account';
+        submitBtn.textContent = 'Sign In';
+        switchBtn.textContent = 'Sign Up';
+    }
+    else {
+        formTitle.textContent = 'Sign Up Account';
+        submitBtn.textContent = 'Sign Up';
+        switchBtn.textContent = 'Log in';
+    }
+});
+
+authForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const usernameValue = document.getElementById('reg-username').value;
+    const passwordValue = document.getElementById('reg-password').value;
+
+    const route = isLoginMode ? '/login' : '/register';
+
+    try {
+        const response = await fetch(API_URL + route, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: usernameValue,
+                password: passwordValue
+            })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+            if (isLoginMode) {
+                localStorage.setItem('token', data.access_token);
+                checkAuth();
+            } else {
+                alert('Success! Now log in.');
+                switchBtn.click();
+            }
+        } else {
+            alert(data.detail);
+        }
+    } catch (error) {
+        console.error(error);
+    }
+});
 
 function checkAuth() {
     const token = localStorage.getItem('token');
 
     if (token) {
-        authSection.style.display = 'none';
+        authContainer.style.display = 'none';
         taskSection.style.display = 'block';
-        loadData();
     } else {
-        authSection.style.display = 'block';
+        authContainer.style.display = 'flex';
         taskSection.style.display = 'none';
-    }
-}
-
-document.getElementById('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const usernameInput = document.getElementById('login-username').value;
-    const passwordInput = document.getElementById('login-password').value;
-
-    try {
-        const response = await fetch(`${API_URL}/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                username: usernameInput,
-                password: passwordInput
-            })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            localStorage.setItem('token', data.access_token);
-            checkAuth();
-        } else {
-            alert(data.detail || 'Помилка логіну');
-        }
-    } catch (error) {
-        console.error('Login error:', error);
-    }
-});
-
-async function loadData() {
-    try {
-        const token = localStorage.getItem('token');
-
-        let response = await fetch(`${API_URL}/tasks`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-
-        let dataArray = await response.json();
-        let container = document.getElementById('task-list');
-
-        container.innerHTML = '';
-
-        dataArray.forEach(itemText => {
-            let p = document.createElement('p');
-            p.textContent = itemText.title;
-            container.appendChild(p);
-        })
-    }
-    catch (error) {
-        console.error('Error fetching data:', error);
     }
 }
 
