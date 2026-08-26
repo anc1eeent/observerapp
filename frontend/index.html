@@ -8,6 +8,7 @@
 
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/task.css">
 
     <script src="js/app.js" defer></script>
 </head>
@@ -45,8 +46,40 @@
     </div>
 
     <div id="task-section" style="display: none;">
-        <h2>To-do list</h2>
-        <div id="task-list"></div>
+        <div class="app-layout">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Observer</h2>
+                </div>
+                <ul class="nav-links">
+                    <li class="active">
+                        <span class="icon">📝</span> All Tasks
+                    </li>
+                </ul>
+                <div class="sidebar-footer">
+                    <button id="logout-btn" class="logout-btn">Log Out</button>
+                </div>
+            </aside>
+
+
+            <main class="main-content">
+                <header class="main-header">
+                    <h1>Inbox</h1>
+                </header>
+
+                <div class="task-input-area">
+                    <div class="input-wrapper">
+                        <input type="text" id="new-task-title" placeholder="What needs to be done?"
+                            autocomplete="off" />
+                        <input type="text" id="new-task-desc" placeholder="Description (optional)" autocomplete="off" />
+                    </div>
+                    <button id="add-task-btn" class="add-btn">Add</button>
+                </div>
+
+                <div id="task-list" class="task-list">
+                </div>
+            </main>
+        </div>
     </div>
 
 </body>
