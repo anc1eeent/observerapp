@@ -74,3 +74,61 @@ function checkAuth() {
 }
 
 checkAuth();
+
+const addTaskBtn = document.getElementById('add-task-btn');
+addTaskBtn.addEventListener('click', async (event) => {
+    event.preventDefault();
+    const titleValue = document.getElementById('new-task-title').value.trim();
+    const descValue = document.getElementById('new-task-desc').value.trim();
+    if (!titleValue) {
+        alert("[ERROR]: Can't be empty!")
+        return
+    }
+    const token = localStorage.getItem('token');
+    try {
+        const response = await fetch(API_URL + '/tasks/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ title: titleValue, description: descValue })
+        })
+        if (response.ok) {
+            document.getElementById('new-task-title').value = '';
+            document.getElementById('new-task-desc').value = '';
+        }
+        else {
+            alert("[ERROR]: Failed to create task!")
+        }
+    }
+    catch (error) { console.error(error) }
+
+});
+
+async function loadData() {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await fetch(API_URL + '/tasks/', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+            const tasks = await response.json();
+            console.log("My tasks: ", tasks);
+        } else {
+            console.error("[ERROR] Cound'nt get tasks.");
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const logoutBtn = document.getElementById('logout-btn');
+logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('token');
+    checkAuth();
+});
