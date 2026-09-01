@@ -3,11 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 import jwt
 from sqlalchemy.orm import Session
 
-import models
-import security
-import schemas
-from database import engine, get_db
-from routes import auth, tasks
+from backend import models
+from backend import security
+from backend import schemas
+from backend.database import engine, get_db
+from backend.routes import auth, tasks
 
 ObserverTasker = FastAPI()
 models.Base.metadata.create_all(bind=engine)
