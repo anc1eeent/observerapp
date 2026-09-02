@@ -7,6 +7,8 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+    email = Column(String, unique=True, index=True, nullable=True)
+    avatar_url = Column(String, nullable=True)
     tasks = relationship("Task", back_populates="owner")
 
 class Task(Base):

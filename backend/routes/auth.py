@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 import jwt
 from sqlalchemy.orm import Session
 from backend import models, schemas, security, crud
@@ -27,13 +27,15 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
 
 @router.post("/login")
 
-def login_user(user: schemas.UserLogin, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_username(db, user.username)
+def login_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_username(db, form_data.username)
     if not db_user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    is_password_valid = security.verify_password(user.password, db_user.hashed_password)
+        
+    is_password_valid = security.verify_password(form_data.password, db_user.hashed_password)
     if not is_password_valid:
         raise HTTPException(status_code=401, detail="Invalid credentials")
+        
     access_token = security.create_access_token(data={"sub": db_user.username})
     return {"access_token": access_token, "token_type": "bearer"}
 

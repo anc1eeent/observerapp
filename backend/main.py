@@ -9,7 +9,7 @@ from backend import security
 from backend import schemas
 from backend.exceptions import TokenExpiredException, token_expire_handler
 from backend.database import engine, get_db
-from backend.routes import auth, tasks
+from backend.routes import auth, tasks, users
 
 ObserverTasker = FastAPI()
 models.Base.metadata.create_all(bind=engine)
@@ -24,5 +24,6 @@ ObserverTasker.add_middleware(
 
 ObserverTasker.include_router(auth.router)
 ObserverTasker.include_router(tasks.router)
+ObserverTasker.include_router(users.router)
 ObserverTasker.add_exception_handler(TokenExpiredException, token_expire_handler)
 
