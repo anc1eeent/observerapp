@@ -1,4 +1,39 @@
 const API_URL = "http://127.0.0.1:8000";
+const API = {
+  async request(endpoint, method = "GET", body = null){
+    const token = localStorage.getItem("token");
+    const headers = {};
+
+    if (token){
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    if (body){
+      headers["Content-Type"] = "application/json";
+    }
+    try {
+      const options = {
+        method: method,
+        headers: headers,
+      }
+      if(body){
+        options.body = JSON.stringify(body);
+      }
+      const response = await fetch(API_URL + endpoint, options);
+      if (response.status === 401){
+        handleSessionExpired();
+        return null;
+      }
+      if (response.ok){
+        return await response.json();
+      }
+      const errorData = await response.json();
+      throw new Error(errorData.detail || "[Error] can't reach server.")
+    } catch (error) {
+      console.error(`[API ERROR] ${method} ${endpoint}: `, error);
+      throw error;
+    }
+  }
+};
 const authContainer = document.getElementById("auth-container");
 const taskSection = document.getElementById("task-section");
 const authForm = document.getElementById("register-form");
@@ -101,23 +136,12 @@ addTaskBtn.addEventListener("click", async (event) => {
     alert("[ERROR]: Can't be empty!");
     return;
   }
-  const token = localStorage.getItem("token");
   try {
-    const response = await fetch(API_URL + "/tasks/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ title: titleValue, description: descValue }),
-    });
-    if (response.ok) {
+      const response = await API.request("/tasks/", "POST", {title: titleValue, description: descValue});
+     if (response) {
       document.getElementById("new-task-title").value = "";
       document.getElementById("new-task-desc").value = "";
-    } else if (response.status === 401) {
-      handleSessionExpired();
-    } else {
-      alert("[ERROR]: Failed to create task!");
+      loadData();
     }
   } catch (error) {
     console.error(error);
@@ -125,23 +149,11 @@ addTaskBtn.addEventListener("click", async (event) => {
 });
 
 async function loadData() {
-  const token = localStorage.getItem("token");
   try {
-    const response = await fetch(API_URL + "/tasks/", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (response.ok) {
-      const tasks = await response.json();
-      console.log("My tasks: ", tasks);
-    } else if (response.status === 401) {
-      handleSessionExpired();
-    } else {
-      console.error("[ERROR] Cound'nt get tasks.");
-    }
+    const tasks = await API.request("/tasks/");
+   if (tasks){
+    console.log("My tasks: ", tasks)
+   }
   } catch (error) {
     console.error(error);
   }
@@ -174,31 +186,13 @@ profileOverlay.addEventListener("click", (event) => {
 });
 
 async function loadProfile(){
-  const token = localStorage.getItem("token");
-  if (!token) {
-    return;
-  }
   try{
-    const response = await fetch(API_URL + "/users/me", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    if (response.ok){
-      const userData = await response.json();
-      profileUsername.textContent = userData.username;
-      profileEmail.textContent = userData.email || "No email provided";
-    }
-    else if (response.status === 401){
-      handleSessionExpired();
-    }else{
-      profileUsername.textContent = "Error loading";
-    }
-
-  }catch (error){
-    console.error("[ERROR] Can`t reach a profile: ", error);
+    const userData = await API.request("/users/me");
+  if(userData){
+    profileUsername.textContent = userData.username;
+    profileEmail.textContent = userData.email || "No email provided";
+  }  
+  }catch (error) {
     profileUsername.textContent = "Error loading";
-    }
-
-}
+  }
+};
