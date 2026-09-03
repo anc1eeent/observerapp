@@ -149,10 +149,20 @@ addTaskBtn.addEventListener("click", async (event) => {
 });
 
 async function loadData() {
+  const containter = document.getElementById("task-list");
+  containter.innerHTML = "";
   try {
     const tasks = await API.request("/tasks/");
-   if (tasks){
-    console.log("My tasks: ", tasks)
+    if (tasks){
+      tasks.forEach(task => {
+      const taskHTML = `
+          <div class="task-card" style="border: 1px solid gray; padding: 10px; margin-bottom: 10px;">
+              <h3>${task.title}</h3>
+              <p>${task.description}</p>
+          </div>
+        `;
+      containter.innerHTML += taskHTML;
+    });
    }
   } catch (error) {
     console.error(error);
