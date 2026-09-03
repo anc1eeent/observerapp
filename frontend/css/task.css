@@ -76,13 +76,17 @@
     margin: 0 auto;
 }
 
-.main-header h1 {
-    color: #ffffff;
-    font-size: 2rem;
-    margin-bottom: 30px;
-    font-weight: 500;
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    width: 100%;
+    margin-bottom: 20px;
 }
 
+.main-header h1 {
+    margin: 0;
+}
 
 .task-input-area {
     display: flex;

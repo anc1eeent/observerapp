@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/auth.css">
     <link rel="stylesheet" href="css/task.css">
+    <link rel="stylesheet" href="css/profile.css">
 
     <script src="js/app.js" defer></script>
 </head>
@@ -64,8 +65,11 @@
 
             <main class="main-content">
                 <header class="main-header">
-                    <h1>Inbox</h1>
-                </header>
+    <h1>Inbox</h1>
+    <div id="profile-trigger" class="profile-avatar" title="Profile">
+        <img src="assets/profile/user.png" alt="User Avatar">
+    </div>
+</header>
 
                 <div class="task-input-area">
                     <div class="input-wrapper">
@@ -81,7 +85,19 @@
             </main>
         </div>
     </div>
-
+    <div id="profile-overlay" class="overlay hidden">
+        <div class="profile-modal">
+            <button id="close-profile-btn" class="close-btn">&times;</button>
+            
+            <div class="profile-content">
+                <img src="assets/profile/user.png" alt="User Avatar Large" class="profile-avatar-large">
+                <h3 id="profile-username">Loading...</h3>
+                <p id="profile-email">No email provided</p>
+            </div>
+            <div class="profile-actions" id="profile-actions-container">
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

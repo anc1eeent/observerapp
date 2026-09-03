@@ -76,6 +76,7 @@ function checkAuth() {
     authContainer.style.display = "none";
     taskSection.style.display = "block";
     loadData();
+    loadProfile();
   } else {
     authContainer.style.display = "flex";
     taskSection.style.display = "none";
@@ -151,3 +152,53 @@ logoutBtn.addEventListener("click", () => {
   localStorage.removeItem("token");
   checkAuth();
 });
+
+const profileTrigger = document.getElementById("profile-trigger");
+const profileOverlay = document.getElementById("profile-overlay");
+const closeProfileBtn = document.getElementById("close-profile-btn");
+const profileUsername = document.getElementById("profile-username");
+const profileEmail = document.getElementById("profile-email");
+
+profileTrigger.addEventListener("click", () => {
+  profileOverlay.classList.remove("hidden");
+});
+
+closeProfileBtn.addEventListener("click", () => {
+  profileOverlay.classList.add("hidden");
+});
+
+profileOverlay.addEventListener("click", (event) => {
+  if (event.target === profileOverlay){
+    profileOverlay.classList.add("hidden");
+  }
+});
+
+async function loadProfile(){
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return;
+  }
+  try{
+    const response = await fetch(API_URL + "/users/me", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    if (response.ok){
+      const userData = await response.json();
+      profileUsername.textContent = userData.username;
+      profileEmail.textContent = userData.email || "No email provided";
+    }
+    else if (response.status === 401){
+      handleSessionExpired();
+    }else{
+      profileUsername.textContent = "Error loading";
+    }
+
+  }catch (error){
+    console.error("[ERROR] Can`t reach a profile: ", error);
+    profileUsername.textContent = "Error loading";
+    }
+
+}
