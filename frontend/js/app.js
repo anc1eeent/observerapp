@@ -31,17 +31,26 @@ authForm.addEventListener("submit", async (event) => {
   const usernameValue = document.getElementById("reg-username").value;
   const passwordValue = document.getElementById("reg-password").value;
 
-  const route = isLoginMode ? "/login" : "/register";
-
-  try {
-    const response = await fetch(API_URL + route, {
+  try{
+  let response;
+  if (isLoginMode) {   
+    const formData = new URLSearchParams();
+    formData.append("username", usernameValue)
+    formData.append("password", passwordValue)
+    response = await fetch(API_URL + "/login", {
+        method: "POST",
+        body: formData
+      });
+  } else {
+    const route = "/register";
+    response = await fetch(API_URL + route, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         username: usernameValue,
         password: passwordValue,
       }),
-    });
+  })}
     const data = await response.json();
 
     if (response.ok) {
