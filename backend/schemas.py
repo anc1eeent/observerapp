@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Optional
+from datetime import datetime
 
 class UserCreate(BaseModel):
     username: str = Field(min_length=3, max_length=50)
@@ -32,4 +33,18 @@ class UserProfile(BaseModel):
     class Config:
         from_attributes = True
     
+class PomodoroCreate(BaseModel):
+    duration_seconds: int
+    task_id: Optional[int] = None
+    description: str | None = None
 
+class PomodoroResponse(BaseModel):
+    id: int
+    owner_id: int
+    duration_seconds: int
+    task_id: Optional[int] = None
+    description: str | None = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
