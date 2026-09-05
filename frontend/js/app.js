@@ -108,13 +108,13 @@ function checkAuth() {
   const token = localStorage.getItem("token");
 
   if (token) {
-    authContainer.style.display = "none";
-    taskSection.style.display = "block";
+    authContainer.classList.add("hidden");
+    taskSection.classList.remove("hidden");
     loadData();
     loadProfile();
   } else {
-    authContainer.style.display = "flex";
-    taskSection.style.display = "none";
+    authContainer.classList.remove("hidden");
+    taskSection.classList.add("hidden");
   }
 }
 
@@ -206,3 +206,19 @@ async function loadProfile(){
     profileUsername.textContent = "Error loading";
   }
 };
+
+const tasksView = document.getElementById("tasks-view");
+const pomodoroView = document.getElementById("pomodoro-view");
+const navPomodoroBtn = document.getElementById("nav-pomodoro-btn");
+const navTasksBtn = document.getElementById("nav-tasks-btn");
+
+navPomodoroBtn.addEventListener("click", () => {
+    tasksView.classList.add("hidden");
+    pomodoroView.classList.remove("hidden");
+})
+
+navTasksBtn.addEventListener("click", () => {
+  tasksView.classList.remove("hidden");
+    pomodoroView.classList.add("hidden");
+  
+})

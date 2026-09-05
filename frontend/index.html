@@ -1,6 +1,5 @@
 <!DOCTYPE HTML>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,10 +9,11 @@
     <link rel="stylesheet" href="css/auth.css">
     <link rel="stylesheet" href="css/task.css">
     <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/pomodoro.css">
+
 
     <script src="js/app.js" defer></script>
 </head>
-
 <body>
 
     <div id="auth-container" class="split-view">
@@ -24,7 +24,7 @@
         </div>
 
         <div id="auth-form-section">
-            <h2>Sign Up Account</h2>
+            <h2 id="auth-form-title">Sign Up Account</h2>
             <p class="form-subtitle">Enter your personal data to create your account.</p>
 
             <form id="register-form">
@@ -40,64 +40,89 @@
                 </div>
 
                 <button type="submit" class="primary-btn">Sign Up</button>
-
                 <p class="switch-text">Already have an account? <a href="#" id="switch-to-login">Log in</a></p>
             </form>
         </div>
     </div>
 
-    <div id="task-section" style="display: none;">
+    <div id="task-section" class="hidden">
         <div class="app-layout">
-            <aside class="sidebar">
-                <div class="sidebar-header">
-                    <h2>Observer</h2>
+            
+            <nav id="global-icon-sidebar" class="global-sidebar">
+                <div id="profile-trigger" class="profile-avatar-mini" title="Profile">
+                    <img src="assets/profile/user.png" alt="Avatar">
                 </div>
-                <ul class="nav-links">
-                    <li class="active">
-                        <span class="icon">📝</span> All Tasks
-                    </li>
-                </ul>
-                <div class="sidebar-footer">
-                    <button id="logout-btn" class="logout-btn">Log Out</button>
+                <button id="nav-tasks-btn" class="nav-icon-btn active" title="Tasks">📋</button>
+                <button id="nav-pomodoro-btn" class="nav-icon-btn" title="Pomodoro">⏱️</button>
+            </nav>
+
+            <main id="main-content" class="main-workspace">
+                
+                <div id="tasks-view" class="spa-view">
+                
+                    <aside id="task-submenu" class="submenu">
+                        <div class="sidebar-header">
+                            <h2>Observer</h2>
+                        </div>
+                        <ul class="nav-links">
+                            <li class="active"><span class="icon">📝</span> All Tasks</li>
+                        </ul>
+                        <div class="sidebar-footer">
+                            <button id="logout-btn" class="logout-btn">Log Out</button>
+                        </div>
+                    </aside>
+                    
+                    <section class="task-board">
+                        <header class="main-header">
+                            <h1>Inbox</h1>
+                        </header>
+
+                        <div class="task-input-area">
+                            <div class="input-wrapper">
+                                <input type="text" id="new-task-title" placeholder="What needs to be done?" autocomplete="off" />
+                                <input type="text" id="new-task-desc" placeholder="Description (optional)" autocomplete="off" />
+                            </div>
+                            <button id="add-task-btn" class="add-btn">Add</button>
+                        </div>
+
+                        <div id="task-list" class="task-list">
+                        </div>
+                    </section>
                 </div>
-            </aside>
 
+                <div id="pomodoro-view" class="spa-view hidden pomodoro-board">
+    <div class="timer-container">
+        <h1 id="timer-display" class="timer-display" title="Click to set time">25:00</h1>
 
-            <main class="main-content">
-                <header class="main-header">
-    <h1>Inbox</h1>
-    <div id="profile-trigger" class="profile-avatar" title="Profile">
-        <img src="assets/profile/user.png" alt="User Avatar">
+        <div id="timer-edit-area" class="timer-input-area hidden">
+            <input type="number" id="timer-input-minutes" min="1" max="120" value="25">
+            <span>min</span>
+            <button id="timer-set-btn" class="timer-btn">Set</button>
+        </div>
+
+        
+        <div class="timer-controls">
+            <button id="timer-start-btn" class="timer-btn primary">Start</button>
+            <button id="timer-pause-btn" class="timer-btn hidden">Pause</button>
+            <button id="timer-save-btn" class="timer-btn success hidden">Save</button>
+        </div>
     </div>
-</header>
+</div>
 
-                <div class="task-input-area">
-                    <div class="input-wrapper">
-                        <input type="text" id="new-task-title" placeholder="What needs to be done?"
-                            autocomplete="off" />
-                        <input type="text" id="new-task-desc" placeholder="Description (optional)" autocomplete="off" />
-                    </div>
-                    <button id="add-task-btn" class="add-btn">Add</button>
-                </div>
-
-                <div id="task-list" class="task-list">
-                </div>
             </main>
         </div>
     </div>
     <div id="profile-overlay" class="overlay hidden">
         <div class="profile-modal">
             <button id="close-profile-btn" class="close-btn">&times;</button>
-            
             <div class="profile-content">
                 <img src="assets/profile/user.png" alt="User Avatar Large" class="profile-avatar-large">
                 <h3 id="profile-username">Loading...</h3>
                 <p id="profile-email">No email provided</p>
             </div>
-            <div class="profile-actions" id="profile-actions-container">
-            </div>
+            <div class="profile-actions" id="profile-actions-container"></div>
         </div>
     </div>
-</body>
 
+</body>
 </html>

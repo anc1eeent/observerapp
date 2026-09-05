@@ -1,0 +1,73 @@
+.pomodoro-board {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.timer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--input-bg);
+    padding: 50px;
+    border-radius: 20px;
+    border: 1px solid var(--input-border);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.timer-display {
+    font-size: 6rem;
+    font-weight: bold;
+    color: var(--text-main);
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: color 0.3s;
+    font-variant-numeric: tabular-nums; /* Щоб цифри не "стрибали" по ширині */
+}
+
+.timer-display:hover {
+    color: #8a2be2;
+}
+
+.timer-controls {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.timer-btn {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: opacity 0.2s, transform 0.1s;
+}
+
+.timer-btn:active {
+    transform: scale(0.95);
+}
+
+.timer-btn.primary { background-color: #8a2be2; color: white; }
+.timer-btn.success { background-color: #28a745; color: white; }
+.timer-btn:hover { opacity: 0.8; }
+
+.timer-input-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.timer-input-area input {
+    width: 80px;
+    text-align: center;
+    font-size: 1.2rem;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    padding: 8px;
+    outline: none;
+}

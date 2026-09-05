@@ -10,7 +10,7 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=True)
     avatar_url = Column(String, nullable=True)
     tasks = relationship("Task", back_populates="owner")
-    pomodoros = relationship("PomodoroStats", back_populates="Owner")
+    pomodoros = relationship("PomodoroStats", back_populates="owner")
 
 class Task(Base):
     __tablename__ = "tasks"
@@ -26,8 +26,8 @@ class PomodoroStats(Base):
     __tablename__ = "PomodoroStats"
     id = Column(Integer, primary_key=True, index=True)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    duration_secods = Column(Integer, nullable=False, default=0)
+    duration_seconds = Column(Integer, nullable=False, default=0)
     task_id = Column(Integer, ForeignKey("tasks.id"), nullable=True) 
     description = Column(String, nullable=True)
-    owner = relationship("User", back_populates="PomodoroStats")
-    tasks = relationship("Task", back_populates="PomodoroStats")
+    owner = relationship("User", back_populates="pomodoros")
+    task = relationship("Task", back_populates="pomodoros")
