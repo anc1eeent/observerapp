@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from datetime import datetime
 
@@ -20,11 +20,9 @@ class TaskResponse(BaseModel):
     description: str | None = None
     completed: bool
     owner_id: int
+    model_config = ConfigDict(from_attributes=True)
 
-    class Config:
-        from_attributes = True
-
-class TaskUpdate:
+class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     completed: Optional[bool] = None
@@ -34,9 +32,7 @@ class UserProfile(BaseModel):
     username: str
     email: Optional[str] = None
     avatar_url: Optional[str] = None
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
     
 class PomodoroCreate(BaseModel):
     duration_seconds: int
@@ -50,6 +46,4 @@ class PomodoroResponse(BaseModel):
     task_id: Optional[int] = None
     description: str | None = None
     created_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

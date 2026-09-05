@@ -25,7 +25,7 @@ def delete_task(task_id: int, db: Session = Depends(get_db), current_user: model
     crud.delete_task(db, task_id)
     return {"message": "Task was deleted successfully."}
 
-@router.put("/{task_id}", response_model=schemas.Task)
+@router.put("/{task_id}", response_model=schemas.TaskResponse)
 
 def update_task(task_id: int, task_data: schemas.TaskUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     db_task = db.query(models.Task).filter(models.Task.id == task_id).first()
