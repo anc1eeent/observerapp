@@ -24,6 +24,11 @@ class TaskResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class TaskUpdate:
+    title: Optional[str] = None
+    description: Optional[str] = None
+    completed: Optional[bool] = None
+
 class UserProfile(BaseModel):
     id: int
     username: str

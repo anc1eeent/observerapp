@@ -22,6 +22,22 @@ def create_task(db: Session, task: schemas.TaskCreate, owner_id: int):
 def get_tasks(db: Session, owner_id: int):
      return db.query(models.Task).filter(models.Task.owner_id == owner_id).all()
 
+def update_task(db: Session, task_id: int, task_update: dict):
+     db_task = db.query(models.Task).filter(models.Task.id == task_id).first()
+     if db_task:
+          for key, value in task_update.items():
+               setattr(db_task, key, value)
+          db.commit()
+          db.refresh(db_task)
+     return db_task
+
+def delete_task(db: Session, task_id: int):
+     db_task = db.query(models.Task).filter(models.Task.id == task_id).first()
+     if db_task:
+          db.delete(db_task)
+          db.commit()
+     return db_task
+     
 def create_pomodoro(db: Session, pomodoro: schemas.PomodoroCreate, owner_id: int):
      new_pomodoro = models.PomodoroStats(duration_seconds=pomodoro.duration_seconds, 
                                          description=pomodoro.description,
@@ -34,3 +50,5 @@ def create_pomodoro(db: Session, pomodoro: schemas.PomodoroCreate, owner_id: int
 
 def get_pomodoro(db: Session, owner_id: int):
      return db.query(models.PomodoroStats).filter(models.PomodoroStats.owner_id == owner_id).all()
+
+    
