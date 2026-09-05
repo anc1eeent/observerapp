@@ -24,6 +24,25 @@ def create_user(db: Session, user: schemas.UserCreate, hashed_password: str):
      db.refresh(new_user)
      return new_user
 
+def update_user_profile(db: Session, db_user: models.User, update_data: dict):
+     """
+     Updates the user's profile information(email, avatar_url).
+     """
+     for key, value in update_data.items():
+          setattr(db_user, key, value)
+     db.commit()
+     db.refresh(db_user)
+     return db_user
+
+def update_user_password(db: Session, db_user: models.User, new_hashed_password: str):
+     """
+     Update the user's password with a new securely hashed password.
+     """
+     db_user.hashed_password = new_hashed_password
+     db.commit()
+     db.refresh(db_user)
+     return db_user
+
 # ==========================================
 # TASK OPERATIONS
 # ==========================================

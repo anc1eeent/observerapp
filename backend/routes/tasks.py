@@ -13,12 +13,15 @@ def create_new_task(task: schemas.TaskCreate, db: Session = Depends(get_db), cur
     
 @router.get("/", response_model=list[schemas.TaskResponse])
 
-def read_tasks(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+def read_tasks(db: Session = Depends(get_db), 
+               current_user: models.User = Depends(get_current_user)):
     return crud.get_tasks(db, owner_id=current_user.id)
 
 @router.delete("/{task_id}")
 
-def delete_task(task_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+def delete_task(task_id: int, 
+                db: Session = Depends(get_db), 
+                current_user: models.User = Depends(get_current_user)):
     db_task = db.query(models.Task).filter(models.Task.id == task_id).first()
     if not db_task or db_task.owner_id != current_user.id:
         raise HTTPException(status_code=404, detail="[ERROR] Task was not found.")
@@ -27,7 +30,10 @@ def delete_task(task_id: int, db: Session = Depends(get_db), current_user: model
 
 @router.put("/{task_id}", response_model=schemas.TaskResponse)
 
-def update_task(task_id: int, task_data: schemas.TaskUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+def update_task(task_id: int, 
+                task_data: schemas.TaskUpdate, 
+                db: Session = Depends(get_db), 
+                current_user: models.User = Depends(get_current_user)):
     db_task = db.query(models.Task).filter(models.Task.id == task_id).first()
     if not db_task or db_task.owner_id != current_user.id:
         raise HTTPException(status_code=404, detail="[ERROR] Task was not found.")

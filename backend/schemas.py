@@ -21,6 +21,12 @@ class UserLogin(BaseModel):
     username: str
     password: str
 
+class UserPasswordUpdate(BaseModel):
+    """Schema for user password update"""
+    old_password: str
+    new_password: str = Field(min_length=8)
+
+
 class UserProfile(BaseModel):
     """Schema for returning user data 
     (excludes sensitive info like passwords)."""
@@ -30,6 +36,11 @@ class UserProfile(BaseModel):
     avatar_url: Optional[str] = None
     model_config = ConfigDict(from_attributes=True)
 
+class UserUpdate(BaseModel):
+    """Schema for updating profile"""
+    email: Optional[str] = None
+    avatar_url: Optional[str] = None
+ 
 # ==========================================
 # TASK SCHEMAS
 # ==========================================
@@ -40,10 +51,7 @@ class TaskCreate(BaseModel):
     description: str | None = None
 
 class TaskResponse(BaseModel):
-    """
-    Schema for partially updating an existing task.
-    All fields are optional so the client can update just one specific field.
-    """
+    """Schema for returning task data to the client."""
     id: int
     title: str
     description: str | None = None
@@ -52,7 +60,10 @@ class TaskResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class TaskUpdate(BaseModel):
-    """Schema for returning task data to the client."""
+    """
+    Schema for partially updating an existing task.
+    All fields are optional so the client can update just one specific field.
+    """
     title: Optional[str] = None
     description: Optional[str] = None
     completed: Optional[bool] = None
