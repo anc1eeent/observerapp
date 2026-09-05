@@ -1,3 +1,7 @@
+"""
+Security utilities for authentication and authorization.
+Handles password hashing, verification, and JSON Web Token (JWT) generation.
+"""
 import os
 import jwt
 from passlib.context import CryptContext
@@ -10,6 +14,11 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+# ==========================================
+# PASSWORD HASHING SETUP
+# ==========================================
+
+# Configure passlib to use the bcrypt algorithm for hashing passwords
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def get_password_hash(password: str) -> str:
@@ -17,6 +26,10 @@ def get_password_hash(password: str) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
+
+# ==========================================
+# TOKEN GENERATION
+# ==========================================
 
 def create_access_token(data:dict):
     to_encode = data.copy()
