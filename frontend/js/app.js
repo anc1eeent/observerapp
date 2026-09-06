@@ -180,6 +180,10 @@ const profileOverlay = document.getElementById("profile-overlay");
 const closeProfileBtn = document.getElementById("close-profile-btn");
 const profileUsername = document.getElementById("profile-username");
 const profileEmail = document.getElementById("profile-email");
+const updateProfile = document.getElementById("profile-update-form");
+const updatePassword = document.getElementById("password-update-form");
+const errorProfile = document.getElementById("profile-error-msg");
+const errorPassword = document.getElementById("password-error-msg");
 
 profileTrigger.addEventListener("click", () => {
   profileOverlay.classList.remove("hidden");
@@ -193,6 +197,48 @@ profileOverlay.addEventListener("click", (event) => {
   if (event.target === profileOverlay){
     profileOverlay.classList.add("hidden");
   }
+});
+
+updateProfile.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  errorProfile.textContent = "";
+  
+  const emailValue = document.getElementById("update-email").value.trim();
+  const avatarValue = document.getElementById("update-avatar").value.trim();
+
+  const updateBody = {};
+  if (emailValue) updateBody.email = emailValue;
+  if (avatarValue) updateBody.avatar_url = avatarValue;
+
+  try{
+    await API.request("/users/me/profile", "PATCH", updateBody);
+    loadProfile();
+    document.getElementById("update-email").value = "";
+    document.getElementById("update-avatar").value = "";
+  } catch (error){
+    errorProfile.textContent = error.message;
+  }
+});
+
+updatePassword.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  errorPassword.textContent = "";
+
+  const old_password = document.getElementById("old-password").value;
+  const new_password = document.getElementById("new-password").value;
+
+  try {
+    await API.request("/users/me/password", "PATCH", {
+      old_password: old_password,
+      new_password: new_password
+    });
+    document.getElementById("old-password").value = "";
+    document.getElementById("new-password").value = "";
+    alert("Password changed successfully!");
+  } catch (error){
+    errorPassword.textContent = error.message;
+  }
+
 });
 
 async function loadProfile(){
@@ -212,13 +258,17 @@ const pomodoroView = document.getElementById("pomodoro-view");
 const navPomodoroBtn = document.getElementById("nav-pomodoro-btn");
 const navTasksBtn = document.getElementById("nav-tasks-btn");
 
-navPomodoroBtn.addEventListener("click", () => {
-    tasksView.classList.add("hidden");
-    pomodoroView.classList.remove("hidden");
-})
+const navBtns = document.querySelectorAll('.nav-icon-btn');
+const spaViews = document.querySelectorAll(".spa-view");
 
-navTasksBtn.addEventListener("click", () => {
-  tasksView.classList.remove("hidden");
-    pomodoroView.classList.add("hidden");
-  
-})
+navBtns.forEach(btn => {
+  btn.addEventListener("click", () => {
+    navBtns.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    const targetId = btn.getAttribute("data-target");
+    spaViews.forEach(view => view.classList.add("hidden"));
+
+    document.getElementById(targetId).classList.remove("hidden");
+  });
+});
