@@ -148,6 +148,16 @@ addTaskBtn.addEventListener("click", async (event) => {
   }
 });
 
+const taskListContainer = document.getElementById("task-list")
+
+taskListContainer.addEventListener("click", async (event) =>{
+  if (event.target.classList.contains("delete-task-btn")){
+    const taskId = event.target.getAttribute("data-id");
+      await API.request(`/tasks/${taskId}`, "DELETE");
+      loadData();
+  }
+});
+
 async function loadData() {
   const containter = document.getElementById("task-list");
   containter.innerHTML = "";
@@ -156,11 +166,20 @@ async function loadData() {
     if (tasks){
       tasks.forEach(task => {
       const taskHTML = `
-          <div class="task-card" style="border: 1px solid gray; padding: 10px; margin-bottom: 10px;">
-              <h3>${task.title}</h3>
-              <p>${task.description}</p>
+  <div class="task-card ${task.completed ? 'completed' : ''}" style="border: 1px solid gray; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start;">
+      <div class="task-content" style="display: flex; gap: 10px; align-items: flex-start;">
+          <input type="checkbox" class="task-complete-cb" data-id="${task.id}" ${task.completed ? 'checked' : ''} style="margin-top: 5px;">
+          <div>
+              <h3 style="margin: 0; ${task.completed ? 'text-decoration: line-through; color: gray;' : ''}">${task.title}</h3>
+              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #ccc;">${task.description || ''}</p>
           </div>
-        `;
+      </div>
+      <div class="task-actions" style="display: flex; gap: 5px;">
+          <button class="edit-task-btn" data-id="${task.id}" style="cursor: pointer; background: transparent; border: none; font-size: 1.2em;">✏️</button>
+          <button class="delete-task-btn" data-id="${task.id}" style="cursor: pointer; background: transparent; border: none; font-size: 1.2em;">🗑️</button>
+      </div>
+  </div>
+`;
       containter.innerHTML += taskHTML;
     });
    }
@@ -252,11 +271,6 @@ async function loadProfile(){
     profileUsername.textContent = "Error loading";
   }
 };
-
-const tasksView = document.getElementById("tasks-view");
-const pomodoroView = document.getElementById("pomodoro-view");
-const navPomodoroBtn = document.getElementById("nav-pomodoro-btn");
-const navTasksBtn = document.getElementById("nav-tasks-btn");
 
 const navBtns = document.querySelectorAll('.nav-icon-btn');
 const spaViews = document.querySelectorAll(".spa-view");
