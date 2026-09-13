@@ -40,6 +40,7 @@ const authForm = document.getElementById("register-form");
 const switchBtn = document.getElementById("switch-to-login");
 
 let isLoginMode = false;
+let editingTaskId = null;
 
 const formTitle = document.querySelector("#auth-form-section h2");
 const submitBtn = authForm.querySelector("button");
@@ -137,11 +138,18 @@ addTaskBtn.addEventListener("click", async (event) => {
     return;
   }
   try {
-      const response = await API.request("/tasks/", "POST", {title: titleValue, description: descValue});
+    let endpoint = "/tasks/";
+    let method = "POST";
+     if (editingTaskId != null){
+        endpoint = `/tasks/${editingTaskId}`;
+        method = "PUT";
+      }
+      const response = await API.request(endpoint, method, {title: titleValue, description: descValue});
      if (response) {
       document.getElementById("new-task-title").value = "";
       document.getElementById("new-task-desc").value = "";
       loadData();
+      editingTaskId = null;
     }
   } catch (error) {
     console.error(error);
@@ -156,6 +164,15 @@ taskListContainer.addEventListener("click", async (event) =>{
       await API.request(`/tasks/${taskId}`, "DELETE");
       loadData();
   }
+  else if (event.target.classList.contains("edit-task-btn")){
+    const taskId = event.target.getAttribute("data-id");
+    const taskCard = event.target.closest(".task-card");
+    const currentTitle = taskCard.querySelector("h3").textContent;
+    const currentDesc = taskCard.querySelector("p").textContent;
+    editingTaskId = taskId;
+    document.getElementById("new-task-title").value = currentTitle;
+    document.getElementById("new-task-desc").value = currentDesc;
+    };
 });
 
 async function loadData() {
