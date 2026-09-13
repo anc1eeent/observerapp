@@ -40,6 +40,7 @@ const authForm = document.getElementById("register-form");
 const switchBtn = document.getElementById("switch-to-login");
 
 let isLoginMode = false;
+let editingTaskId = null;
 
 const formTitle = document.querySelector("#auth-form-section h2");
 const submitBtn = authForm.querySelector("button");
@@ -137,15 +138,41 @@ addTaskBtn.addEventListener("click", async (event) => {
     return;
   }
   try {
-      const response = await API.request("/tasks/", "POST", {title: titleValue, description: descValue});
+    let endpoint = "/tasks/";
+    let method = "POST";
+     if (editingTaskId != null){
+        endpoint = `/tasks/${editingTaskId}`;
+        method = "PUT";
+      }
+      const response = await API.request(endpoint, method, {title: titleValue, description: descValue});
      if (response) {
       document.getElementById("new-task-title").value = "";
       document.getElementById("new-task-desc").value = "";
       loadData();
+      editingTaskId = null;
     }
   } catch (error) {
     console.error(error);
   }
+});
+
+const taskListContainer = document.getElementById("task-list")
+
+taskListContainer.addEventListener("click", async (event) =>{
+  if (event.target.classList.contains("delete-task-btn")){
+    const taskId = event.target.getAttribute("data-id");
+      await API.request(`/tasks/${taskId}`, "DELETE");
+      loadData();
+  }
+  else if (event.target.classList.contains("edit-task-btn")){
+    const taskId = event.target.getAttribute("data-id");
+    const taskCard = event.target.closest(".task-card");
+    const currentTitle = taskCard.querySelector("h3").textContent;
+    const currentDesc = taskCard.querySelector("p").textContent;
+    editingTaskId = taskId;
+    document.getElementById("new-task-title").value = currentTitle;
+    document.getElementById("new-task-desc").value = currentDesc;
+    };
 });
 
 async function loadData() {
@@ -156,11 +183,20 @@ async function loadData() {
     if (tasks){
       tasks.forEach(task => {
       const taskHTML = `
-          <div class="task-card" style="border: 1px solid gray; padding: 10px; margin-bottom: 10px;">
-              <h3>${task.title}</h3>
-              <p>${task.description}</p>
+  <div class="task-card ${task.completed ? 'completed' : ''}" style="border: 1px solid gray; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-start;">
+      <div class="task-content" style="display: flex; gap: 10px; align-items: flex-start;">
+          <input type="checkbox" class="task-complete-cb" data-id="${task.id}" ${task.completed ? 'checked' : ''} style="margin-top: 5px;">
+          <div>
+              <h3 style="margin: 0; ${task.completed ? 'text-decoration: line-through; color: gray;' : ''}">${task.title}</h3>
+              <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #ccc;">${task.description || ''}</p>
           </div>
-        `;
+      </div>
+      <div class="task-actions" style="display: flex; gap: 5px;">
+          <button class="edit-task-btn" data-id="${task.id}" style="cursor: pointer; background: transparent; border: none; font-size: 1.2em;">✏️</button>
+          <button class="delete-task-btn" data-id="${task.id}" style="cursor: pointer; background: transparent; border: none; font-size: 1.2em;">🗑️</button>
+      </div>
+  </div>
+`;
       containter.innerHTML += taskHTML;
     });
    }
@@ -252,11 +288,6 @@ async function loadProfile(){
     profileUsername.textContent = "Error loading";
   }
 };
-
-const tasksView = document.getElementById("tasks-view");
-const pomodoroView = document.getElementById("pomodoro-view");
-const navPomodoroBtn = document.getElementById("nav-pomodoro-btn");
-const navTasksBtn = document.getElementById("nav-tasks-btn");
 
 const navBtns = document.querySelectorAll('.nav-icon-btn');
 const spaViews = document.querySelectorAll(".spa-view");
