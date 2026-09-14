@@ -45,4 +45,6 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/observerapp:latest
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/observerapp:latest
+            ${{ secrets.DOCKER_USERNAME }}/observerapp:${{ github.sha }}
