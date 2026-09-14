@@ -40,7 +40,21 @@ class UserUpdate(BaseModel):
     """Schema for updating profile"""
     email: Optional[str] = None
     avatar_url: Optional[str] = None
- 
+
+# ==========================================
+# TASK_LIST SCHEMAS
+# ==========================================
+
+class TaskListCreate(BaseModel):
+    """Schema for creating a new task lsit."""
+    name: str
+    color: Optional[str] = "#FFFFFF"
+
+class TaskListResponse(TaskListCreate):
+    id: int
+
+    model_config = ConfigDict(from_attributes=True)
+
 # ==========================================
 # TASK SCHEMAS
 # ==========================================
@@ -48,6 +62,7 @@ class UserUpdate(BaseModel):
 class TaskCreate(BaseModel):
     """Schema for creating a new task."""
     title: str
+    list_id: Optional[int] = None
     description: str | None = None
 
 class TaskResponse(BaseModel):
@@ -57,6 +72,7 @@ class TaskResponse(BaseModel):
     description: str | None = None
     completed: bool
     owner_id: int
+    list_id: Optional[int] = None
     model_config = ConfigDict(from_attributes=True)
 
 class TaskUpdate(BaseModel):
@@ -65,6 +81,7 @@ class TaskUpdate(BaseModel):
     All fields are optional so the client can update just one specific field.
     """
     title: Optional[str] = None
+    list_id: Optional[int] = None
     description: Optional[str] = None
     completed: Optional[bool] = None
 
