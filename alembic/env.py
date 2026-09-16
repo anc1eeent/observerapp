@@ -9,8 +9,11 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from backend.database import Base
-import backend.models
+from src.database import Base
+from src.users.models import User
+from src.pomodoro.models import PomodoroStats
+from src.tasks.models import Task, TaskList
+
 
 target_metadata = Base.metadata
 # this is the Alembic Config object, which provides
