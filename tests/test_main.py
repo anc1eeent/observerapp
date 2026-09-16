@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from backend.main import ObserverTasker
+from src.main import ObserverTasker
 
 client = TestClient(ObserverTasker)
 
