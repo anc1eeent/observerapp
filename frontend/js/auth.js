@@ -35,12 +35,12 @@ export function setupAuth(onLoginSuccess) {
       const formData = new URLSearchParams();
       formData.append("username", usernameValue)
       formData.append("password", passwordValue)
-      response = await fetch(API_URL + "/login", {
+      response = await fetch(API_URL + "/users/login", {
           method: "POST",
           body: formData
         });
     } else {
-      const route = "/register";
+      const route = "/users/register";
       response = await fetch(API_URL + route, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
