@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ObserverTasker - To-Do list</title>
+    <title>ObserverTasker - Workspace</title>
 
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/auth.css">
     <link rel="stylesheet" href="css/task.css">
     <link rel="stylesheet" href="css/profile.css">
     <link rel="stylesheet" href="css/pomodoro.css">
-
 
     <script type="module" src="js/app.js"></script>
 </head>
@@ -30,7 +29,7 @@
             <form id="register-form">
                 <div class="input-group">
                     <label for="reg-username">Username</label>
-                    <input type="text" id="reg-username" placeholder="eg. anc1eeent" required minlength="3">
+                    <input type="text" id="reg-username" placeholder="eg. ancieeeent" required minlength="3">
                 </div>
 
                 <div class="input-group">
@@ -48,103 +47,116 @@
     <div id="task-section" class="hidden">
         <div class="app-layout">
 
-            <nav id="global-icon-sidebar" class="global-sidebar">
-                <div id="profile-trigger" class="profile-avatar-mini" title="Profile">
-                    <img src="assets/profile/user.png" alt="Avatar">
+            <aside class="app-sidebar">
+                <div class="sidebar-user-header" id="profile-trigger" title="Open Profile">
+                    <div class="user-info">
+                        <img src="assets/profile/user.png" alt="Avatar" class="avatar-mini">
+                        <span id="sidebar-username-display" class="username-text">ancieeeent</span>
+                    </div>
+                    <div class="header-actions">
+                        <span class="header-icon">🔍</span>
+                        <span class="header-icon">✏️</span>
+                    </div>
                 </div>
-                <div id="nav-tasks-btn" class="nav-icon-btn active" title="Tasks" data-target="tasks-view">
-                    <img src="assets/side-bar-icons/tasks.png" alt="Tasks">
-                </div>
-                <div id="nav-pomodoro-btn" class="nav-icon-btn" title="Pomodoro" data-target="pomodoro-view">
-                    <img src="assets/side-bar-icons/pomodoro.png" alt="Pomodoro">
-                </div>
-            </nav>
 
+                <nav class="sidebar-nav">
+                    <ul class="nav-list top-nav">
+                        <li class="nav-item placeholder"><span class="icon">📥</span> Inbox</li>
+                        <li class="nav-item placeholder"><span class="icon">🎯</span> My issues</li>
+                        <li class="nav-item active" id="nav-tasks-btn" data-target="tasks-view">
+                            <span class="icon">💼</span> Workspace
+                        </li>
+                        <li class="nav-item" id="nav-pomodoro-btn" data-target="pomodoro-view">
+                            <span class="icon">⏱️</span> Pomodoro
+                        </li>
+                    </ul>
+
+                    <div class="nav-group">
+                        <div class="nav-group-title">Your teams <span class="chevron">▼</span></div>
+                        <ul class="nav-list">
+                            <li class="nav-item placeholder"><span class="icon">🏠</span> Home</li>
+                            <li class="nav-item placeholder"><span class="icon">📋</span> Projects</li>
+                            <li class="nav-item placeholder"><span class="icon">👁️</span> Views</li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <div class="sidebar-footer">
+                    <button id="logout-btn" class="minimal-btn">Log Out</button>
+                </div>
+            </aside>
             <main id="main-content" class="main-workspace">
                 
                 <div id="tasks-view" class="spa-view">
-                
-                    <aside id="task-submenu" class="submenu">
-                        <div class="sidebar-header">
-                            <h2>Observer</h2>
-                        </div>
-                        <ul class="nav-links">
-                            <li class="active"><span class="icon">📝</span> All Tasks</li>
-                        </ul>
-                        <div class="sidebar-footer">
-                            <button id="logout-btn" class="logout-btn">Log Out</button>
-                        </div>
-                    </aside>
-                    
                     <section class="task-board">
-                        <header class="main-header">
-                            <h1>Inbox</h1>
+                        <header class="workspace-header">
+                            <h1>Workspace <span>/</span> Active Tasks</h1>
                         </header>
 
-                        <div class="task-input-area">
+                        <div class="task-input-area workspace-input">
                             <div class="input-wrapper">
                                 <input type="text" id="new-task-title" placeholder="What needs to be done?" autocomplete="off" />
-                                <input type="text" id="new-task-desc" placeholder="Description (optional)" autocomplete="off" />
+                                <input type="text" id="new-task-desc" placeholder="Add description..." autocomplete="off" />
                             </div>
-                            <button id="add-task-btn" class="add-btn">Add</button>
+                            <button id="add-task-btn" class="add-btn minimal-primary-btn">Save Task</button>
                         </div>
 
                         <div id="task-list" class="task-list">
+                            <!-- Tasks will be rendered here -->
                         </div>
                     </section>
                 </div>
 
                 <div id="pomodoro-view" class="spa-view hidden pomodoro-board">
-    <div class="timer-container">
-        <h1 id="timer-display" class="timer-display" title="Click to set time">25:00</h1>
-
-        <div id="timer-edit-area" class="timer-input-area hidden">
-            <input type="number" id="timer-input-minutes" min="1" max="120" value="25">
-            <span>min</span>
-            <button id="timer-set-btn" class="timer-btn">Set</button>
-        </div>
-
-        
-        <div class="timer-controls">
-            <button id="timer-start-btn" class="timer-btn primary">Start</button>
-            <button id="timer-pause-btn" class="timer-btn hidden">Pause</button>
-            <button id="timer-save-btn" class="timer-btn success hidden">Save</button>
-        </div>
-    </div>
-</div>
+                    <div class="timer-container">
+                        <h1 id="timer-display" class="timer-display" title="Click to set time">25:00</h1>
+                        <div id="timer-edit-area" class="timer-input-area hidden">
+                            <input type="number" id="timer-input-minutes" min="1" max="120" value="25">
+                            <span>min</span>
+                            <button id="timer-set-btn" class="minimal-btn">Set</button>
+                        </div>
+                        <div class="timer-controls">
+                            <button id="timer-start-btn" class="minimal-primary-btn">Start</button>
+                            <button id="timer-pause-btn" class="minimal-btn hidden">Pause</button>
+                            <button id="timer-save-btn" class="minimal-btn hidden">Save</button>
+                        </div>
+                    </div>
+                </div>
 
             </main>
         </div>
     </div>
+
+
     <div id="profile-overlay" class="overlay hidden">
-        <div class="profile-modal">
-            <button id="close-profile-btn" class="close-btn">&times;</button>
+        <div class="profile-modal" style="background-color: var(--bg-sidebar); border: 1px solid var(--border-color);">
+            <button id="close-profile-btn" class="close-btn" style="color: var(--text-secondary);">&times;</button>
             
             <div class="profile-content">
                 <img id="profile-avatar-img" src="assets/profile/user.png" alt="User Avatar Large" class="profile-avatar-large">
                 <h3 id="profile-username">Loading...</h3>
-                <p id="profile-email">No email provided</p>
+                <p id="profile-email" style="color: var(--text-muted);">No email provided</p>
             </div>
 
             <div class="profile-actions" id="profile-actions-container">
                 <form id="profile-update-form" style="margin-bottom: 15px;">
                     <div class="input-group">
-                        <input type="email" id="update-email" placeholder="New Email">
-                        <input type="text" id="update-avatar" placeholder="New Avatar URL">
+                        <input type="email" id="update-email" placeholder="New Email" style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px; border-radius: 4px;">
+                        <input type="text" id="update-avatar" placeholder="New Avatar URL" style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px; border-radius: 4px;">
                     </div>
-                    <button type="submit" class="primary-btn">Update Profile</button>
-                    <p id="profile-error-msg" style="color: red; font-size: 12px; margin-top: 5px;"></p>
+                    <button type="submit" class="minimal-primary-btn" style="width: 100%; margin-top: 10px;">Update Profile</button>
+                    <p id="profile-error-msg" style="color: #ff5555; font-size: 12px; margin-top: 5px;"></p>
                 </form>
 
-                <hr style="border: 0; border-top: 1px solid #444; margin: 15px 0;">
+                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 15px 0;">
 
                 <form id="password-update-form">
                     <div class="input-group">
-                        <input type="password" id="old-password" placeholder="Current Password" required>
-                        <input type="password" id="new-password" placeholder="New Password" minlength="8" required>
+                        <input type="password" id="old-password" placeholder="Current Password" required style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px; border-radius: 4px;">
+                        <input type="password" id="new-password" placeholder="New Password" minlength="8" required style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px; border-radius: 4px;">
                     </div>
-                    <button type="submit" class="primary-btn">Change Password</button>
-                    <p id="password-error-msg" style="color: red; font-size: 12px; margin-top: 5px;"></p>
+                    <button type="submit" class="minimal-primary-btn" style="width: 100%; margin-top: 10px;">Change Password</button>
+                    <p id="password-error-msg" style="color: #ff5555; font-size: 12px; margin-top: 5px;"></p>
                 </form>
             </div>
         </div>
