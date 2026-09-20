@@ -10,40 +10,56 @@
     <link rel="stylesheet" href="css/task.css">
     <link rel="stylesheet" href="css/profile.css">
     <link rel="stylesheet" href="css/pomodoro.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <script type="module" src="js/app.js"></script>
 </head>
 <body>
 
-    <div id="auth-container" class="split-view">
-        <div id="auth-banner">
-            <h1>ObserverTasker</h1>
-            <p>Get Started with Us</p>
-            <p class="banner-subtext">Complete these easy steps to register your account.</p>
-        </div>
+    <div id="auth-container" class="auth-page-wrapper">
+        <!-- Фоновий розмитий шар -->
+        <div class="auth-bg-overlay"></div>
 
-        <div id="auth-form-section">
-            <h2 id="auth-form-title">Sign Up Account</h2>
-            <p class="form-subtitle">Enter your personal data to create your account.</p>
+        <!-- Центрована картка -->
+        <div class="auth-card">
+            <div class="auth-visual-panel">
+            <!-- Контент лівого банера -->
+            </div>
 
-            <form id="register-form">
-                <div class="input-group">
-                    <label for="reg-username">Username</label>
-                    <input type="text" id="reg-username" placeholder="eg. ancieeeent" required minlength="3">
-                </div>
-
-                <div class="input-group">
-                    <label for="reg-password">Password</label>
-                    <input type="password" id="reg-password" placeholder="Enter your password" required minlength="8">
-                    <span class="hint">Must be at least 8 characters.</span>
-                </div>
-
-                <button type="submit" class="primary-btn">Sign Up</button>
-                <p class="switch-text">Already have an account? <a href="#" id="switch-to-login">Log in</a></p>
+            <div class="auth-forms-panel">
+            <form id="login-form" class="auth-form active">
+            <h2>Log In</h2>
+            <div class="input-group">
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" required autocomplete="username">
+            </div>
+            <div class="input-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="primary-btn">Sign In</button>
+            <p class="switch-text">Don't have an account? <a href="#" id="switch-to-register">Sign up</a></p>
             </form>
+
+            <form id="register-form" class="auth-form">
+            <h2>Create an account</h2>
+            <div class="input-group">
+                <label for="reg-username">Username</label>
+                <input type="text" id="reg-username" required minlength="3" autocomplete="username">
+            </div>
+            <div class="input-group">
+                <label for="reg-password">Password</label>
+                <input type="password" id="reg-password" required minlength="8" autocomplete="new-password">
+            </div>
+            <button type="submit" class="primary-btn">Create account</button>
+            <p class="switch-text">Already have an account? <a href="#" id="switch-to-login">Log in</a></p>
+            </form>
+            </div>
         </div>
     </div>
-
+    
     <div id="task-section" class="hidden">
         <div class="app-layout">
 
