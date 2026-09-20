@@ -4,6 +4,7 @@ let timerInterval = null; // interval id
 let currentSeconds = 0; // current time (++ or --)
 let isCountDown = true; // true - pomodoro mode , false - stopwatch
 let currentTaskId = null; // connection with task id (api)
+let initialSeconds = null;
 
 export function startTimer(){
     if (timerInterval !== null) return;
@@ -57,7 +58,26 @@ export function resumeTimer(){
 }
 
 export function exitTimer(){
+    pauseTimer();
+    let spentTime;
+    if (isCountDown === true){
+        spentTime = initialSeconds - currentSeconds;
+    } else {
+        spentTime = currentSeconds;
+    }
+    if (spentTime < 300){
+        if (window.confirm("You had worked less then 300 seconds, it is not for record. Are you sure you want to exit?") === true){
+            currentSeconds = 0;
+            const currentTime = formatTime(currentSeconds);
+            const displayTimer = document.getElementById("timer-display");
+            displayTimer.textContent = currentTime;
+        } else {
+            return resumeTimer();
+        }
 
+    } else {
+    // TODO: POST request
+    }
 }
     
         
