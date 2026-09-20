@@ -6,6 +6,12 @@ let isCountDown = true; // true - pomodoro mode , false - stopwatch
 let currentTaskId = null; // connection with task id (api)
 let initialSeconds = null;
 
+export function updateTimerDisplay(seconds){
+    const currentTime = formatTime(seconds);
+    const displayTimer = document.getElementById("timer-display");
+    displayTimer.textContent = currentTime;
+}
+
 export function startTimer(){
     if (timerInterval !== null) return;
 
@@ -20,9 +26,7 @@ export function startTimer(){
         } else {
             currentSeconds++;
         }
-        const currentTime = formatTime(currentSeconds);
-        const displayTimer = document.getElementById("timer-display");
-        displayTimer.textContent = currentTime;
+        updateTimerDisplay(currentSeconds);
 
     }, 1000);
     
@@ -57,7 +61,7 @@ export function resumeTimer(){
     startTimer();
 }
 
-export function exitTimer(){
+export async function exitTimer(){
     pauseTimer();
     let spentTime;
     if (isCountDown === true){
@@ -68,15 +72,33 @@ export function exitTimer(){
     if (spentTime < 300){
         if (window.confirm("You had worked less then 300 seconds, it is not for record. Are you sure you want to exit?") === true){
             currentSeconds = 0;
-            const currentTime = formatTime(currentSeconds);
-            const displayTimer = document.getElementById("timer-display");
-            displayTimer.textContent = currentTime;
+           updateTimerDisplay(currentSeconds);
         } else {
             return resumeTimer();
         }
 
     } else {
-    // TODO: POST request
+    try {
+        let endpoint = "/pomodoro/";
+        let method = "POST";
+        const response = await API.request(endpoint, method, {
+            duration_seconds: spentTime,
+            task_id: currentTaskId,
+            description: ""
+        })
+        if (response){
+            currentSeconds = 0;
+            updateTimerDisplay(currentSeconds);
+        }
+    } catch (error){
+        const shouldRetry = window.confirm("Can't save. Retry again?");
+        if (shouldRetry){
+            resumeTimer();
+        } else {
+            currentSeconds = 0;
+           updateTimerDisplay(currentSeconds);
+        }
+    }
     }
 }
     
