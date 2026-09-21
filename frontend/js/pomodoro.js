@@ -51,6 +51,12 @@ export function setupPomodoro() {
     if (exitButton) exitButton.addEventListener("click", () => exitTimer());
 }
 
+export function setCurrentTaskId(id){
+    if (!id) throw new Error("Task ID is required.");
+     currentTaskId = id;
+     console.log("expected id:", currentTaskId);
+}
+
 export function pauseTimer(){
     if (timerInterval === null) return;
     clearInterval(timerInterval);
