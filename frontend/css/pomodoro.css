@@ -1,11 +1,11 @@
-.screen-wrapper {
+.pomodoro-view {
     display: grid;
     place-items: center; 
     min-height: 100vh;
     background-color: #f4f4f9;
 }
 
-.widget-card {
+.timer-container {
     background: #ffffff;
     padding: 2rem;
     border-radius: 12px;
@@ -13,7 +13,7 @@
     text-align: center;
 }
 
-.controls-row {
+.timer-contorls {
     display: flex;
     justify-content: center;
     gap: 1rem; 

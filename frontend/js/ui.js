@@ -1,7 +1,8 @@
-import { setCurrentTaskId } from "./pomodoro";
+import { API, API_URL } from './api.js';
+import { setCurrentTaskId } from "./pomodoro.js";
 
 export function setupNavigation() {
-  const navBtns = document.querySelectorAll('.nav-icon-btn');
+  const navBtns = document.querySelectorAll('.nav-item');
   const spaViews = document.querySelectorAll(".spa-view");
 
   navBtns.forEach(btn => {

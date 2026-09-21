@@ -33,4 +33,9 @@ export const API = {
       throw error;
     }
   }
-};
+}
+
+function handleSessionExpired(){
+  localStorage.removeItem("token");
+  location.reload();
+}
