@@ -48,3 +48,9 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/observerapp:latest
             ${{ secrets.DOCKER_USERNAME }}/observerapp:${{ github.sha }}
+      
+      - name: Deploy tests
+        env:
+          DATABASE_URL: postgresql+psycopg2://test:test@localhost:5432/test_db
+        run: |
+          python -m pytest

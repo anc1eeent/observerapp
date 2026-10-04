@@ -9,16 +9,22 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from src.database import Base
+from src.database import Base, DATABASE_URL
 from src.users.models import User
 from src.pomodoro.models import PomodoroStats
 from src.tasks.models import Task, TaskList
+from src.habits.models import Habit, HabitScheduleVersion, HabitCheckIn
 
 
 target_metadata = Base.metadata
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+config.set_main_option(
+    "sqlalchemy.url",
+    DATABASE_URL.replace("%", "%%"),
+)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -75,7 +81,6 @@ def run_migrations_online() -> None:
     with connectable.connect() as connection:
         context.configure(
             connection=connection, target_metadata=target_metadata,
-            render_as_batch=True
         )
 
         with context.begin_transaction():
