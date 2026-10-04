@@ -14,6 +14,11 @@ class HabitStatus(str, enum.Enum):
     FORMED = "formed"
     EXPIRED = "expired"
 
+class HabitCheckInStatus(str, enum.Enum):
+    DONE = "done"
+    NOT_DONE = "not_done"
+
+
 class Habit(Base):
     __tablename__ = "habits"
 
@@ -29,6 +34,7 @@ class Habit(Base):
 
     owner = relationship("User", back_populates="habits")
     schedule_versions = relationship("HabitScheduleVersion", back_populates="habit", cascade="all, delete-orphan")
+    check_ins = relationship("HabitCheckIn", back_populates="habit", cascade="all, delete-orphan")
 
     __table_args__ = (
         CheckConstraint(
@@ -39,7 +45,7 @@ class Habit(Base):
 
 
 class HabitScheduleVersion(Base):
-    __tablename__ = "habit_schedule_version"
+    __tablename__ = "habit_schedule_versions"
     id = Column(Integer, primary_key=True, index=True)
     habit_id =  Column(Integer, ForeignKey("habits.id", ondelete="CASCADE"), nullable=False, index=True)
     effective_from = Column(Date, nullable=False)
@@ -58,14 +64,33 @@ class HabitScheduleVersion(Base):
         UniqueConstraint(
             "habit_id",
             "effective_from",
-            name="uq_habit_schedule_version_habit_effective_from",
+            name="uq_habit_schedule_versions_habit_effective_from",
         ),
         CheckConstraint(
             "monday OR tuesday OR wednesday OR thursday OR friday OR saturday OR sunday",
-            name="ck_habit_schedule_version_at_least_one_weekday",
+            name="ck_habit_schedule_versions_at_least_one_weekday",
         ),
         CheckConstraint(
             "daily_target_minutes IS NULL OR daily_target_minutes > 0",
             name="ck_habit_schedule_versions_daily_target_positive"
         )
+    )
+
+class HabitCheckIn(Base):
+    __tablename__ = "habit_check_ins"
+    id = Column(Integer, primary_key=True, index=True)
+    habit_id =  Column(Integer, ForeignKey("habits.id", ondelete="CASCADE"), nullable=False, index=True)
+    tracked_date = Column(Date, nullable=False)
+    status = Column(SqlEnum(HabitCheckInStatus, name="habit_check_in_status"), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    habit = relationship("Habit", back_populates="check_ins")
+
+    __table_args__ = (
+        UniqueConstraint(
+            "habit_id",
+            "tracked_date",
+            name="uq_habit_check_ins_habit_tracked_date",
+        ),
     )
