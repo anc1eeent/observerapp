@@ -22,3 +22,4 @@ class User(Base):
     tasks = relationship("Task", back_populates="owner", cascade="all, delete-orphan")
     pomodoros = relationship("PomodoroStats", back_populates="owner", cascade="all, delete-orphan")
     task_list = relationship("TaskList", back_populates="owner", cascade="all, delete-orphan")
+    habits = relationship("Habits", back_populates="owner", cascade="all, delete-orphan")
