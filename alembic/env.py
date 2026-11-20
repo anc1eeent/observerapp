@@ -10,11 +10,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from src.database import Base, DATABASE_URL
-from src.users.models import User
-from src.pomodoro.models import PomodoroStats
-from src.tasks.models import Task, TaskList
-from src.habits.models import Habit, HabitScheduleVersion, HabitCheckIn
-
+import src.db_models  # noqa: F401
 
 target_metadata = Base.metadata
 # this is the Alembic Config object, which provides

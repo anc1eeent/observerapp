@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import src.db_models  # noqa: F401  (registers all ORM models before any request)
 
 from src.users.router import router as users_router
 from src.tasks.router import router as tasks_router
