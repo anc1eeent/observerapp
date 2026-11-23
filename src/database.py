@@ -1,20 +1,18 @@
 """
 Database configuration and connection management.
-Sets up the SQLite engine and provides the session dependency for FastAPI routes.
+Sets up the PostgreSQL engine and provides the session dependency for FastAPI routes.
 """
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base, Session
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-# The URL for the SQLite database file (created in the root directory)
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./observertasker.db")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL environment variable is required.")
 
-engine = create_engine(
-    DATABASE_URL,
-    connect_args=connect_args
-)
+
+engine = create_engine(DATABASE_URL)
 
 # SessionLocal is a factory that generates new database sessions for each request
 SessionLocal = sessionmaker(

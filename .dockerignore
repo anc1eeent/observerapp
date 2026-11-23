@@ -6,5 +6,5 @@ __pycache__/
 *.sqlite3
 .env
 .git/
-.gitigrone
+.gitignore
 .vscode

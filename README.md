@@ -1,22 +1,89 @@
-# observerApp
+# ObserverTasker
 
-observerTasker is a smart to-do application where you can organize your day, create tasks, make notes, and control your time. It also serves as a learning mini-project to showcase my skills in backend development and DevOps.
+[![CI](https://github.com/anc1eeent/observerapp/actions/workflows/ci.yml/badge.svg)](https://github.com/anc1eeent/observerapp/actions/workflows/ci.yml)
 
-# tech stack
+ObserverTasker is a to-do application where you can organize your day, manage tasks and track focus time with a Pomodoro timer. It is also a learning project to practice backend development and DevOps.
 
-# backend:
-FastAPI - A modern web framework for building APIs with Python.
-SQLite - A lightweight relational database.
+## Tech Stack
 
-# frontend:
-Vanilla (HTML / CSS / JS)
+- **Backend:** FastAPI, SQLAlchemy, Pydantic, Alembic
+- **Database:** PostgreSQL
+- **Frontend:** vanilla HTML, CSS and JavaScript (ES modules)
+- **Infrastructure:** Docker, Docker Compose, GitHub Actions
 
-## Project Structure:
-* `main.py` - The entry point of the application.
-* `database.py` - Database configuration and setup.
-* `models.py` - Database schemas and models.
-* `index.html` - Frontend user interface.
-* `script.js` - Frontend logic.
+## Project Structure
 
-# roadmap:
-my long-term goal is to build a large-scale application for my own use and release it as an open-source project for others. Through this project, I want to showcase and improve my skills in backend, frontend, and DevOps.
+```text
+src/
+├── main.py          # application entry point
+├── database.py      # database engine and session
+├── db_models.py     # registry of all ORM models (used by the app and Alembic)
+├── users/           # registration, login, profile
+├── tasks/           # tasks and task lists
+├── pomodoro/        # Pomodoro sessions
+└── habits/          # habit tracking (in progress)
+alembic/             # database migrations
+frontend/            # web interface
+tests/               # API tests
+```
+
+Each domain folder contains `router.py` (endpoints), `schemas.py` (request and response validation), `service.py` (business logic) and `models.py` (database tables).
+
+## Local Setup with Docker Compose
+
+### Prerequisites
+
+- Docker with Docker Compose
+
+### Environment Configuration
+
+Create a local `.env` file from the example:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Replace the placeholder values in `.env`. Generate a secret key with:
+
+```powershell
+docker run --rm python:3.12-slim python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+
+The value of `POSTGRES_PASSWORD` must match the password in `DATABASE_URL`. The database host in `DATABASE_URL` must stay `db`, the PostgreSQL service name inside Docker Compose.
+
+Do not commit the `.env` file.
+
+### Start the Application
+
+```powershell
+docker compose up -d db
+docker compose run --rm --build api alembic upgrade head
+docker compose up -d api
+```
+
+Check that both services are running:
+
+```powershell
+docker compose ps
+```
+
+The API documentation is available at http://localhost:8000/docs.
+
+### Open the Frontend
+
+The frontend uses ES modules, so it must be served over HTTP:
+
+```powershell
+cd frontend
+python -m http.server 5500
+```
+
+Then open http://localhost:5500.
+
+### Run the Tests
+
+```powershell
+docker compose run --rm --build api sh -c "pip install -q -r requirements/dev.txt && pytest -q"
+```
+
+The same tests run in CI on every pull request
