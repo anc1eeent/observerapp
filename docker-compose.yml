@@ -5,7 +5,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      ENVOIRONMENT: development
+      ENVIRONMENT: development
       SECRET_KEY: ${SECRET_KEY?SECRET_KEY is required}
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
     depends_on:
