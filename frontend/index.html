@@ -126,13 +126,39 @@
                             <input type="text" id="new-task-title" class="composer-title" placeholder="What needs to be done?" maxlength="200" autocomplete="off" aria-label="Task title">
                             <input type="text" id="new-task-desc" class="composer-desc" placeholder="Add a description (optional)" maxlength="2000" autocomplete="off" aria-label="Task description">
                         </div>
-                        <button type="submit" id="add-task-btn" class="btn btn-primary">Add task</button>
+                        <div class="task-composer-footer">
+                            <div class="composer-options">
+                                <select id="new-task-priority" class="input input-sm" aria-label="Priority">
+                                    <option value="low">Low priority</option>
+                                    <option value="medium" selected>Medium priority</option>
+                                    <option value="high">High priority</option>
+                                </select>
+                                <input type="date" id="new-task-due" class="input input-sm" aria-label="Due date">
+                            </div>
+                            <button type="submit" id="add-task-btn" class="btn btn-primary">Add task</button>
+                        </div>
                     </form>
+
+                    <div id="task-toolbar" class="task-toolbar hidden">
+                        <input type="search" id="task-search" class="input input-sm" placeholder="Search tasks…" aria-label="Search tasks">
+                        <label class="toolbar-sort">
+                            <span class="text-secondary">Sort by</span>
+                            <select id="task-sort" class="input input-sm">
+                                <option value="priority">Priority</option>
+                                <option value="due">Due date</option>
+                                <option value="newest">Newest</option>
+                            </select>
+                        </label>
+                    </div>
 
                     <div id="task-list"></div>
                     <div id="task-empty" class="empty-state hidden">
                         <strong>No tasks yet</strong>
-                        Add your first task above.
+                        Add your first task above. Give it a due date and a priority to keep it on track.
+                    </div>
+                    <div id="task-no-matches" class="empty-state hidden">
+                        <strong>No matching tasks</strong>
+                        Try a different search.
                     </div>
                 </section>
 
@@ -165,6 +191,34 @@
 
                         <p class="timer-hint">Click the time to change the duration.</p>
                     </div>
+
+                    <div class="focus-stats">
+                        <div class="stat-cards">
+                            <div class="stat-card">
+                                <span class="stat-label">Focused today</span>
+                                <span id="stat-today" class="stat-value">0m</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-label">Sessions today</span>
+                                <span id="stat-sessions" class="stat-value">0</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-label">Last 7 days</span>
+                                <span id="stat-week" class="stat-value">0m</span>
+                            </div>
+                        </div>
+
+                        <div class="stats-panels">
+                            <div class="stats-panel">
+                                <h2 class="stats-panel-title">Focus this week</h2>
+                                <div id="focus-chart" class="focus-chart"></div>
+                            </div>
+                            <div class="stats-panel">
+                                <h2 class="stats-panel-title">Recent sessions</h2>
+                                <ul id="recent-sessions" class="recent-sessions"></ul>
+                            </div>
+                        </div>
+                    </div>
                 </section>
 
             </main>
@@ -190,10 +244,27 @@
                     <textarea name="description" class="input" rows="4" maxlength="2000"></textarea>
                     <span class="field-error" data-error-for="description"></span>
                 </label>
+                <div class="field-row">
+                    <label class="field">
+                        <span class="field-label">Priority</span>
+                        <select name="priority" class="input">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                        <span class="field-error" data-error-for="priority"></span>
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Due date</span>
+                        <input type="date" name="dueDate" class="input">
+                        <span class="field-error" data-error-for="dueDate"></span>
+                    </label>
+                </div>
                 <label class="checkbox-field">
                     <input type="checkbox" name="completed">
                     <span>Completed</span>
                 </label>
+                <p id="task-dialog-focus" class="field-hint"></p>
                 <p id="task-dialog-error" class="form-error" role="alert"></p>
             </div>
             <footer class="dialog-footer">

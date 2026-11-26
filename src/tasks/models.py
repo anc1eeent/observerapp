@@ -4,7 +4,7 @@ This module maps Python classes to database tables using SQLAlchemy ORM.
 """
 
 from src.database import Base
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, DateTime, func
 from sqlalchemy.orm import relationship
 
 class Task(Base):
@@ -16,6 +16,11 @@ class Task(Base):
 
     # New tasks are marked as incomplete by
     completed = Column(Boolean, default=False)
+
+    # "low", "medium" or "high"; validated by the API schema
+    priority = Column(String(10), nullable=False, default="medium", server_default="medium")
+    due_date = Column(Date, nullable=True)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
     # Foreign key establishes the database-level link to the users table
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
@@ -33,4 +38,4 @@ class TaskList(Base):
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
 
     owner = relationship("User", back_populates="task_list")
-    tasks = relationship("Task", back_populates="task_list")
+    tasks = relationship("Task", back_populates="task_list")

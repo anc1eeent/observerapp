@@ -3,7 +3,7 @@
  */
 .task-composer {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: var(--space-3);
     margin-bottom: var(--space-5);
     padding: var(--space-3) var(--space-4);
@@ -35,6 +35,40 @@
 
 .task-composer-fields input::placeholder {
     color: var(--text-muted);
+}
+
+.task-composer-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+}
+
+.composer-options {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+}
+
+.task-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+}
+
+.task-toolbar input[type="search"] {
+    flex: 1;
+    max-width: 320px;
+}
+
+.toolbar-sort {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
 }
 
 .composer-title {
@@ -74,6 +108,22 @@
     border-radius: var(--radius-md);
     background-color: var(--bg-surface);
     transition: border-color var(--transition), background-color var(--transition);
+}
+
+/* Priority is shown as a colored stripe on the left edge */
+.task-card.priority-high {
+    box-shadow: inset 3px 0 0 var(--danger);
+}
+
+.task-card.priority-low {
+    box-shadow: inset 3px 0 0 var(--border-strong);
+}
+
+.task-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
 }
 
 .task-card:hover {

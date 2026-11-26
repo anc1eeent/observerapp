@@ -3,8 +3,10 @@ Pydantic schemas for data validation and serialization.
 These models define the shape of requests coming IN (Create/Update) 
 and responses going OUT (Response) of our API.
 """
-from pydantic import BaseModel, Field, ConfigDict
+from datetime import datetime
 from typing import Optional
+
+from pydantic import BaseModel, Field, ConfigDict
 
 class PomodoroCreate(BaseModel):
     """Schema for logging a completed Pomodoro session."""
@@ -20,4 +22,5 @@ class PomodoroResponse(BaseModel):
     duration_seconds: int
     task_id: Optional[int] = None
     description: str | None = None
-    model_config = ConfigDict(from_attributes=True)
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)

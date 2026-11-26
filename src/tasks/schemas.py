@@ -3,13 +3,15 @@ Pydantic schemas for data validation and serialization.
 These models define the shape of requests coming IN (Create/Update) 
 and responses going OUT (Response) of our API.
 """
-from typing import Annotated, Optional
+from datetime import date, datetime
+from typing import Annotated, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, StringConstraints
 
 # A title must contain at least one non-space character.
 Title = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
 Description = Annotated[str, StringConstraints(max_length=2000)]
+Priority = Literal["low", "medium", "high"]
 
 # ==========================================
 # TASK_LIST SCHEMAS
@@ -34,6 +36,8 @@ class TaskBase(BaseModel):
     title: Title
     description: Description | None = None
     list_id: Optional[int] = None
+    priority: Priority = "medium"
+    due_date: Optional[date] = None
 
 class TaskCreate(TaskBase):
     """From base TaskBase schema"""
@@ -44,6 +48,9 @@ class TaskResponse(TaskBase):
     id: int
     completed: bool
     owner_id: int
+    created_at: datetime
+    # Total time of Pomodoro sessions linked to the task
+    focus_seconds: int = 0
     model_config = ConfigDict(from_attributes=True)
 
 class TaskUpdate(BaseModel):
@@ -51,4 +58,6 @@ class TaskUpdate(BaseModel):
     title: Optional[Title] = None
     description: Optional[Description] = None
     list_id: Optional[int] = None
-    completed: Optional[bool] = None
+    completed: Optional[bool] = None
+    priority: Optional[Priority] = None
+    due_date: Optional[date] = None

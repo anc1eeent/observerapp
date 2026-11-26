@@ -36,6 +36,8 @@
     --danger: #f87171;
     --danger-hover: #fb8f8f;
     --danger-soft: rgba(248, 113, 113, 0.12);
+    --warning: #fbbf24;
+    --warning-soft: rgba(251, 191, 36, 0.12);
     --info: #60a5fa;
     --info-soft: rgba(96, 165, 250, 0.12);
 
