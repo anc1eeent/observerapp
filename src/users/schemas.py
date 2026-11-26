@@ -3,7 +3,7 @@ Pydantic schemas for data validation and serialization.
 These models define the shape of requests coming IN (Create/Update) 
 and responses going OUT (Response) of our API.
 """
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from typing import Optional
 from datetime import datetime
 
@@ -38,5 +38,5 @@ class UserProfile(BaseModel):
 
 class UserUpdate(BaseModel):
     """Schema for updating profile"""
-    email: Optional[str] = None
-    avatar_url: Optional[str] = None
+    email: Optional[EmailStr] = None
+    avatar_url: Optional[str] = Field(default=None, max_length=500)

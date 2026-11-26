@@ -27,6 +27,22 @@ def get_task_lists(db: Session, owner_id: int):
     """Retrieve all task lists belonging to a specific user."""
     return db.query(models.TaskList).filter(models.TaskList.owner_id == owner_id).all()
 
+def get_task_for_owner(db: Session, task_id: int, owner_id: int):
+     """Return the task if it exists and belongs to the user, otherwise None."""
+     return (
+          db.query(models.Task)
+          .filter(models.Task.id == task_id, models.Task.owner_id == owner_id)
+          .first()
+     )
+
+def get_task_list_for_owner(db: Session, list_id: int, owner_id: int):
+     """Return the task list if it exists and belongs to the user, otherwise None."""
+     return (
+          db.query(models.TaskList)
+          .filter(models.TaskList.id == list_id, models.TaskList.owner_id == owner_id)
+          .first()
+     )
+
 def create_task(db: Session, task: schemas.TaskCreate, owner_id: int):
      """Create a new task linked to the user who requested it."""
      new_task = models.Task(title=task.title, list_id=task.list_id ,description=task.description, owner_id=owner_id)
@@ -61,4 +77,4 @@ def delete_task(db: Session, task_id: int):
      if db_task:
           db.delete(db_task)
           db.commit()
-     return db_task
+     return db_task

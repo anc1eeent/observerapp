@@ -8,9 +8,10 @@ from typing import Optional
 
 class PomodoroCreate(BaseModel):
     """Schema for logging a completed Pomodoro session."""
-    duration_seconds: int
+    # A session lasts more than zero seconds and at most one day.
+    duration_seconds: int = Field(gt=0, le=24 * 60 * 60)
     task_id: Optional[int] = None
-    description: str | None = None
+    description: str | None = Field(default=None, max_length=2000)
 
 class PomodoroResponse(BaseModel):
     """Schema for returning Pomodoro history."""
@@ -19,4 +20,4 @@ class PomodoroResponse(BaseModel):
     duration_seconds: int
     task_id: Optional[int] = None
     description: str | None = None
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)

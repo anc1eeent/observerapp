@@ -49,6 +49,11 @@ async def update_profile(update_data: schemas.UserUpdate,
                          current_user: models.User = Depends(get_current_user),
                          db: Session = Depends(get_db)):
   update_dict = update_data.model_dump(exclude_unset=True)
+  email = update_dict.get("email")
+  if email:
+    owner = service.get_user_by_email(db, email)
+    if owner and owner.id != current_user.id:
+      raise HTTPException(status_code=409, detail="Email is already in use")
   updated_user = service.update_user_profile(db, current_user, update_dict)
   return updated_user
 
@@ -64,4 +69,4 @@ async def update_password(
   updated_user = service.update_user_password(db, current_user, new_hashed_password)
   return updated_user
 
-  
+  
