@@ -13,7 +13,7 @@
     text-align: center;
 }
 
-.timer-contorls {
+.timer-controls {
     display: flex;
     justify-content: center;
     gap: 1rem; 

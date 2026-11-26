@@ -1,111 +1,197 @@
-import { API, API_URL } from './api.js';
+/**
+ * Pomodoro page: a countdown timer that can be linked to a task.
+ * A finished or stopped session is saved through POST /pomodoro/.
+ *
+ * States: idle -> running <-> paused -> idle (after saving or discarding).
+ */
+import { API } from './api.js';
+import { showError } from './ui.js';
 
-let timerInterval = null; // interval id
-let currentSeconds = 0; // current time (++ or --)
-let isCountDown = true; // true - pomodoro mode , false - stopwatch
-let currentTaskId = null; // connection with task id (api)
-let initialSeconds = null;
+const DEFAULT_MINUTES = 25;
+// Shorter sessions are not worth saving; the user is asked to discard them.
+const MIN_SESSION_SECONDS = 60;
 
-export function updateTimerDisplay(seconds){
-    const currentTime = formatTime(seconds);
-    const displayTimer = document.getElementById("timer-display");
-    displayTimer.textContent = currentTime;
+let timerInterval = null;
+let initialSeconds = DEFAULT_MINUTES * 60;
+let currentSeconds = initialSeconds;
+let currentTaskId = null; // null means "no task"
+let isActive = false; // true while a session is running or paused
+
+function getElements() {
+  return {
+    display: document.getElementById("timer-display"),
+    editArea: document.getElementById("timer-edit-area"),
+    minutesInput: document.getElementById("timer-input-minutes"),
+    setButton: document.getElementById("timer-set-btn"),
+    startButton: document.getElementById("timer-start-btn"),
+    pauseButton: document.getElementById("timer-pause-btn"),
+    saveButton: document.getElementById("timer-save-btn"),
+  };
 }
 
-export function startTimer(){
-    if (timerInterval !== null) return;
-
-    timerInterval = setInterval(() => {
-        if (isCountDown){
-            currentSeconds--;
-            if (currentSeconds <= 0){
-                clearInterval(timerInterval);
-                timerInterval = null;
-                
-            }
-        } else {
-            currentSeconds++;
-        }
-        updateTimerDisplay(currentSeconds);
-
-    }, 1000);
-    
+export function formatTime(totalSeconds) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
-export function formatTime(totalSeconds){
-    const minutes = Math.floor((totalSeconds / 60));
-    const seconds = totalSeconds % 60
+function updateTimerDisplay() {
+  getElements().display.textContent = formatTime(currentSeconds);
+}
 
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+/** Shows the buttons that make sense in the current state. */
+function updateControls() {
+  const { startButton, pauseButton, saveButton } = getElements();
+  const isRunning = timerInterval !== null;
+  startButton.classList.toggle("hidden", isActive);
+  pauseButton.classList.toggle("hidden", !isActive);
+  saveButton.classList.toggle("hidden", !isActive);
+  pauseButton.textContent = isRunning ? "Pause" : "Resume";
+}
+
+function tick() {
+  currentSeconds--;
+  updateTimerDisplay();
+  if (currentSeconds <= 0) {
+    stopInterval();
+    saveSession(true);
+  }
+}
+
+function stopInterval() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+}
+
+function startTimer() {
+  if (timerInterval !== null) return;
+  isActive = true;
+  getElements().editArea.classList.add("hidden");
+  timerInterval = setInterval(tick, 1000);
+  updateControls();
+}
+
+function togglePause() {
+  if (timerInterval !== null) {
+    stopInterval();
+  } else {
+    startTimer();
+  }
+  updateControls();
+}
+
+function resetTimer() {
+  stopInterval();
+  isActive = false;
+  currentSeconds = initialSeconds;
+  updateTimerDisplay();
+  updateControls();
+}
+
+/**
+ * Saves the time spent in the current session.
+ * isFinished is true when the countdown reached zero.
+ */
+async function saveSession(isFinished = false) {
+  stopInterval();
+  updateControls();
+  const spentSeconds = initialSeconds - currentSeconds;
+
+  if (spentSeconds < MIN_SESSION_SECONDS) {
+    if (window.confirm("Sessions shorter than a minute are not saved. Discard this session?")) {
+      resetTimer();
+    }
+    return;
+  }
+
+  try {
+    await API.request("/pomodoro/", "POST", {
+      duration_seconds: spentSeconds,
+      task_id: currentTaskId,
+    });
+    alert(isFinished ? "Session complete and saved!" : "Session saved!");
+    resetTimer();
+  } catch (error) {
+    // The session stays paused, so the user can press Save again.
+    showError(error);
+  }
+}
+
+/** Applies the duration typed by the user; only allowed while idle. */
+function setDuration() {
+  const { minutesInput, editArea } = getElements();
+  const minutes = parseInt(minutesInput.value, 10);
+  if (!Number.isInteger(minutes) || minutes < 1 || minutes > 120) {
+    alert("Duration must be between 1 and 120 minutes.");
+    return;
+  }
+  initialSeconds = minutes * 60;
+  editArea.classList.add("hidden");
+  resetTimer();
 }
 
 export function setupPomodoro() {
-    const startButton = document.getElementById("start-btn");
-    const pauseButton = document.getElementById("pause-btn");
-    const resumeButton = document.getElementById("resume-btn");
-    const exitButton = document.getElementById("exit-timer-btn");
+  const { display, editArea, setButton, startButton, pauseButton, saveButton } = getElements();
 
-    if (startButton) startButton.addEventListener("click", () => startTimer());
-    if (pauseButton) pauseButton.addEventListener("click", () => pauseTimer());
-    if (resumeButton) resumeButton.addEventListener("click", () => resumeTimer());
-    if (exitButton) exitButton.addEventListener("click", () => exitTimer());
-}
-
-export function setCurrentTaskId(id){
-    if (!id) throw new Error("Task ID is required.");
-     currentTaskId = id;
-     console.log("expected id:", currentTaskId);
-}
-
-export function pauseTimer(){
-    if (timerInterval === null) return;
-    clearInterval(timerInterval);
-    timerInterval = null;
-}
-
-export function resumeTimer(){
-    startTimer();
-}
-
-export async function exitTimer(){
-    pauseTimer();
-    let spentTime;
-    if (isCountDown === true){
-        spentTime = initialSeconds - currentSeconds;
-    } else {
-        spentTime = currentSeconds;
+  startButton.addEventListener("click", startTimer);
+  pauseButton.addEventListener("click", togglePause);
+  saveButton.addEventListener("click", () => saveSession(false));
+  setButton.addEventListener("click", setDuration);
+  display.addEventListener("click", () => {
+    if (!isActive) {
+      editArea.classList.toggle("hidden");
     }
-    if (spentTime < 300){
-        if (window.confirm("You had worked less then 300 seconds, it is not for record. Are you sure you want to exit?") === true){
-            currentSeconds = 0;
-           updateTimerDisplay(currentSeconds);
-        } else {
-            return resumeTimer();
-        }
+  });
 
-    } else {
+  updateTimerDisplay();
+  updateControls();
+}
+
+/** Builds the task selector; the empty option means "no task". */
+export function renderPomodoroTaskSelector(tasks) {
+  const select = document.createElement("select");
+  select.id = "task-selector";
+
+  const noTaskOption = document.createElement("option");
+  noTaskOption.value = "";
+  noTaskOption.textContent = "No task — just focus";
+  select.appendChild(noTaskOption);
+
+  tasks
+    .filter(task => !task.completed)
+    .forEach(task => {
+      const option = document.createElement("option");
+      option.value = task.id;
+      option.textContent = task.title;
+      select.appendChild(option);
+    });
+
+  // Keep the previous choice if that task is still available.
+  select.value = currentTaskId !== null ? String(currentTaskId) : "";
+  if (select.value === "") {
+    currentTaskId = null;
+  }
+
+  select.addEventListener("change", (event) => {
+    const selectedId = event.target.value;
+    currentTaskId = selectedId ? parseInt(selectedId, 10) : null;
+  });
+
+  const container = document.getElementById("task-selector-container");
+  container.innerHTML = "";
+  container.appendChild(select);
+}
+
+/** Reloads the task list each time the Pomodoro page is opened. */
+export function pomodoroPageInit() {
+  const pomodoroNavButton = document.getElementById("nav-pomodoro-btn");
+  if (!pomodoroNavButton) return;
+  pomodoroNavButton.addEventListener("click", async () => {
     try {
-        let endpoint = "/pomodoro/";
-        let method = "POST";
-        const response = await API.request(endpoint, method, {
-            duration_seconds: spentTime,
-            task_id: currentTaskId,
-            description: ""
-        })
-        if (response){
-            currentSeconds = 0;
-            updateTimerDisplay(currentSeconds);
-        }
-    } catch (error){
-        const shouldRetry = window.confirm("Can't save. Retry again?");
-        if (shouldRetry){
-            resumeTimer();
-        } else {
-            currentSeconds = 0;
-           updateTimerDisplay(currentSeconds);
-        }
+      const tasks = await API.request("/tasks/");
+      renderPomodoroTaskSelector(tasks || []);
+    } catch (error) {
+      showError(error);
     }
-    }
+  });
 }
-    
-        
