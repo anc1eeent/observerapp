@@ -5,6 +5,10 @@ def get_user_by_username(db: Session, username: str):
      """Retrieve a user by their unique username. Used for authentication."""
      return db.query(models.User).filter(models.User.username == username).first()
 
+def get_user_by_email(db: Session, email: str):
+     """Retrieve a user by email. Used to keep emails unique."""
+     return db.query(models.User).filter(models.User.email == email).first()
+
 def create_user(db: Session, user: schemas.UserCreate, hashed_password: str):
      """Create a new user record with a safely hashed password."""
      new_user = models.User(username=user.username, hashed_password=hashed_password)
@@ -31,4 +35,4 @@ def update_user_password(db: Session, db_user: models.User, new_hashed_password:
      db_user.hashed_password = new_hashed_password
      db.commit()
      db.refresh(db_user)
-     return db_user
+     return db_user

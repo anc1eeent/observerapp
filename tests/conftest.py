@@ -17,8 +17,7 @@ def client() -> TestClient:
     return TestClient(ObserverTasker)
 
 
-@pytest.fixture
-def auth_headers(client: TestClient) -> dict[str, str]:
+def register_and_login(client: TestClient) -> dict[str, str]:
     """Register a fresh user, log in and return the Authorization header."""
     username = f"user_{uuid.uuid4().hex[:8]}"
     client.post("/users/register", json={"username": username, "password": TEST_PASSWORD})
@@ -29,3 +28,15 @@ def auth_headers(client: TestClient) -> dict[str, str]:
     assert response.status_code == 200, response.text
     token = response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture
+def auth_headers(client: TestClient) -> dict[str, str]:
+    """Authorization header of a fresh user."""
+    return register_and_login(client)
+
+
+@pytest.fixture
+def other_auth_headers(client: TestClient) -> dict[str, str]:
+    """Authorization header of a second user, for ownership checks."""
+    return register_and_login(client)
