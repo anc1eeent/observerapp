@@ -1,36 +1,38 @@
 /**
- * Shared UI helpers: navigation between pages, logout and error messages.
+ * Shared UI helpers: navigation between pages, logout and messages
+ * for the user.
  */
+import { showToast } from './notify.js';
 
 /** Shows a failed request to the user. ApiError messages are already readable. */
 export function showError(error) {
   if (error.handled) {
     return;
   }
-  alert(error.message || "Something went wrong. Please try again.");
+  showToast(error.message || "Something went wrong. Please try again.", "error");
+}
+
+/** Shows a short confirmation that an action succeeded. */
+export function showSuccess(message) {
+  showToast(message, "success");
 }
 
 export function setupNavigation() {
-  const navBtns = document.querySelectorAll('.nav-item');
-  const spaViews = document.querySelectorAll(".spa-view");
+  const navButtons = document.querySelectorAll(".nav-item");
+  const views = document.querySelectorAll(".spa-view");
 
-  navBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      navBtns.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
+  navButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      navButtons.forEach((other) => other.classList.remove("active"));
+      button.classList.add("active");
 
-      const targetId = btn.getAttribute("data-target");
-      spaViews.forEach(view => view.classList.add("hidden"));
-
-      document.getElementById(targetId).classList.remove("hidden");
+      views.forEach((view) => view.classList.add("hidden"));
+      document.getElementById(button.dataset.target).classList.remove("hidden");
     });
   });
-}
 
-const logoutBtn = document.getElementById("logout-btn");
-if (logoutBtn) {
-  logoutBtn.addEventListener("click", () => {
+  document.getElementById("logout-btn").addEventListener("click", () => {
     localStorage.removeItem("token");
     location.reload();
-  })
+  });
 }

@@ -4,7 +4,7 @@
  * as in the rest of the application.
  */
 import { API } from './api.js';
-import { showError } from './ui.js';
+import { showError, showSuccess } from './ui.js';
 
 function setAuthMode(isLogin) {
   const loginForm = document.getElementById("login-form");
@@ -53,8 +53,11 @@ export function setupAuth(onLoginSuccess) {
 
     try {
       await API.request("/users/register", "POST", { username, password });
-      alert("Success! Now log in.");
+      showSuccess("Account created. You can log in now.");
+      registerForm.reset();
       setAuthMode(true);
+      document.getElementById("login-username").value = username;
+      document.getElementById("login-password").focus();
     } catch (error) {
       showError(error);
     }

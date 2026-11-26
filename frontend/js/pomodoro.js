@@ -5,7 +5,8 @@
  * States: idle -> running <-> paused -> idle (after saving or discarding).
  */
 import { API } from './api.js';
-import { showError } from './ui.js';
+import { confirmDialog } from './dialogs.js';
+import { showError, showSuccess } from './ui.js';
 
 const DEFAULT_MINUTES = 25;
 // Shorter sessions are not worth saving; the user is asked to discard them.
@@ -20,6 +21,7 @@ let isActive = false; // true while a session is running or paused
 function getElements() {
   return {
     display: document.getElementById("timer-display"),
+    progressBar: document.getElementById("timer-progress-bar"),
     editArea: document.getElementById("timer-edit-area"),
     minutesInput: document.getElementById("timer-input-minutes"),
     setButton: document.getElementById("timer-set-btn"),
@@ -36,13 +38,20 @@ export function formatTime(totalSeconds) {
 }
 
 function updateTimerDisplay() {
-  getElements().display.textContent = formatTime(currentSeconds);
+  const { display, progressBar } = getElements();
+  display.textContent = formatTime(currentSeconds);
+  const progress = (initialSeconds - currentSeconds) / initialSeconds;
+  progressBar.style.width = `${Math.min(Math.max(progress, 0), 1) * 100}%`;
 }
 
 /** Shows the buttons that make sense in the current state. */
 function updateControls() {
-  const { startButton, pauseButton, saveButton } = getElements();
+  const { display, startButton, pauseButton, saveButton } = getElements();
   const isRunning = timerInterval !== null;
+  // The duration can only be changed before a session starts.
+  display.disabled = isActive;
+  const selector = document.getElementById("task-selector");
+  if (selector) selector.disabled = isActive;
   startButton.classList.toggle("hidden", isActive);
   pauseButton.classList.toggle("hidden", !isActive);
   saveButton.classList.toggle("hidden", !isActive);
@@ -98,7 +107,13 @@ async function saveSession(isFinished = false) {
   const spentSeconds = initialSeconds - currentSeconds;
 
   if (spentSeconds < MIN_SESSION_SECONDS) {
-    if (window.confirm("Sessions shorter than a minute are not saved. Discard this session?")) {
+    const discard = await confirmDialog({
+      title: "Discard this session?",
+      message: "Sessions shorter than a minute are not saved.",
+      confirmText: "Discard",
+      danger: true,
+    });
+    if (discard) {
       resetTimer();
     }
     return;
@@ -109,7 +124,7 @@ async function saveSession(isFinished = false) {
       duration_seconds: spentSeconds,
       task_id: currentTaskId,
     });
-    alert(isFinished ? "Session complete and saved!" : "Session saved!");
+    showSuccess(isFinished ? "Session complete and saved. Nice work!" : "Session saved.");
     resetTimer();
   } catch (error) {
     // The session stays paused, so the user can press Save again.
@@ -122,7 +137,7 @@ function setDuration() {
   const { minutesInput, editArea } = getElements();
   const minutes = parseInt(minutesInput.value, 10);
   if (!Number.isInteger(minutes) || minutes < 1 || minutes > 120) {
-    alert("Duration must be between 1 and 120 minutes.");
+    showError(new Error("Duration must be between 1 and 120 minutes."));
     return;
   }
   initialSeconds = minutes * 60;
@@ -151,10 +166,12 @@ export function setupPomodoro() {
 export function renderPomodoroTaskSelector(tasks) {
   const select = document.createElement("select");
   select.id = "task-selector";
+  select.className = "input";
+  select.disabled = isActive;
 
   const noTaskOption = document.createElement("option");
   noTaskOption.value = "";
-  noTaskOption.textContent = "No task — just focus";
+  noTaskOption.textContent = "No task, just focus";
   select.appendChild(noTaskOption);
 
   tasks

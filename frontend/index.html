@@ -1,168 +1,267 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ObserverTasker - Workspace</title>
+    <title>ObserverTasker</title>
+    <link rel="icon" href="data:,">
 
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/auth.css">
-    <link rel="stylesheet" href="css/task.css">
-    <link rel="stylesheet" href="css/profile.css">
-    <link rel="stylesheet" href="css/pomodoro.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- theme.css holds all colors and sizes; the other files only use its variables -->
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/task.css">
+    <link rel="stylesheet" href="css/pomodoro.css">
+    <link rel="stylesheet" href="css/profile.css">
 
     <script type="module" src="js/app.js"></script>
 </head>
 <body>
 
-    <div id="auth-container" class="auth-page-wrapper">
-        <!-- Фоновий розмитий шар -->
-        <div class="auth-bg-overlay"></div>
+    <!-- ========== Login and registration ========== -->
+    <div id="auth-container" class="auth-page">
+        <div class="auth-bg"></div>
 
-        <!-- Центрована картка -->
         <div class="auth-card">
-            <div class="auth-visual-panel">
-            <!-- Контент лівого банера -->
+            <div class="auth-visual">
+                <div class="auth-visual-caption">
+                    <div class="auth-brand">ObserverTasker</div>
+                    <p>Plan your tasks. Focus with Pomodoro.</p>
+                </div>
             </div>
 
-            <div class="auth-forms-panel">
-            <form id="login-form" class="auth-form active">
-            <h2>Log In</h2>
-            <div class="input-group">
-                <label for="login-username">Username</label>
-                <input type="text" id="login-username" required maxlength="50" autocomplete="username">
-            </div>
-            <div class="input-group">
-                <label for="login-password">Password</label>
-                <input type="password" id="login-password" required autocomplete="current-password">
-            </div>
-            <button type="submit" class="primary-btn">Sign In</button>
-            <p class="switch-text">Don't have an account? <a href="#" id="switch-to-register">Sign up</a></p>
-            </form>
+            <div class="auth-forms">
+                <form id="login-form" class="auth-form active">
+                    <div class="auth-form-header">
+                        <h2>Welcome back</h2>
+                        <p>Log in to your workspace.</p>
+                    </div>
+                    <label class="field">
+                        <span class="field-label">Username</span>
+                        <input type="text" id="login-username" class="input" required maxlength="50" autocomplete="username">
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Password</span>
+                        <input type="password" id="login-password" class="input" required autocomplete="current-password">
+                    </label>
+                    <button type="submit" class="btn btn-primary btn-block">Log in</button>
+                    <p class="auth-switch">Don't have an account? <a href="#" id="switch-to-register">Sign up</a></p>
+                </form>
 
-            <form id="register-form" class="auth-form">
-            <h2>Create an account</h2>
-            <div class="input-group">
-                <label for="reg-username">Username</label>
-                <input type="text" id="reg-username" required minlength="3" maxlength="50" autocomplete="username">
-            </div>
-            <div class="input-group">
-                <label for="reg-password">Password</label>
-                <input type="password" id="reg-password" required minlength="8" autocomplete="new-password">
-            </div>
-            <button type="submit" class="primary-btn">Create account</button>
-            <p class="switch-text">Already have an account? <a href="#" id="switch-to-login">Log in</a></p>
-            </form>
+                <form id="register-form" class="auth-form">
+                    <div class="auth-form-header">
+                        <h2>Create an account</h2>
+                        <p>It takes less than a minute.</p>
+                    </div>
+                    <label class="field">
+                        <span class="field-label">Username</span>
+                        <input type="text" id="reg-username" class="input" required minlength="3" maxlength="50" autocomplete="username">
+                        <span class="field-hint">3–50 characters</span>
+                    </label>
+                    <label class="field">
+                        <span class="field-label">Password</span>
+                        <input type="password" id="reg-password" class="input" required minlength="8" autocomplete="new-password">
+                        <span class="field-hint">At least 8 characters</span>
+                    </label>
+                    <button type="submit" class="btn btn-primary btn-block">Create account</button>
+                    <p class="auth-switch">Already have an account? <a href="#" id="switch-to-login">Log in</a></p>
+                </form>
             </div>
         </div>
     </div>
-    
+
+    <!-- ========== Application ========== -->
     <div id="task-section" class="hidden">
         <div class="app-layout">
 
-            <aside class="app-sidebar">
-                <div class="sidebar-user-header" id="profile-trigger" title="Open Profile">
-                    <div class="user-info">
-                        <img id="sidebar-avatar-img" src="assets/profile/user.png" alt="Avatar" class="avatar-mini">
-                        <span id="sidebar-username-display" class="username-text"></span>
-                    </div>
-                </div>
+            <aside class="sidebar">
+                <div class="sidebar-brand">ObserverTasker</div>
 
-                <nav class="sidebar-nav">
-                    <ul class="nav-list top-nav">
-                        <li class="nav-item active" id="nav-tasks-btn" data-target="tasks-view">
-                            <span class="icon">💼</span> Workspace
+                <button type="button" class="sidebar-user" id="profile-trigger" title="Open profile">
+                    <img id="sidebar-avatar-img" src="assets/profile/user.png" alt="" class="avatar avatar-sm">
+                    <span id="sidebar-username-display" class="sidebar-username"></span>
+                </button>
+
+                <nav class="sidebar-nav" aria-label="Main">
+                    <ul class="nav-list">
+                        <li>
+                            <button type="button" class="nav-item active" id="nav-tasks-btn" data-target="tasks-view">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="m3 6 1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg>
+                                Tasks
+                            </button>
                         </li>
-                        <li class="nav-item" id="nav-pomodoro-btn" data-target="pomodoro-view">
-                            <span class="icon">⏱️</span> Pomodoro
+                        <li>
+                            <button type="button" class="nav-item" id="nav-pomodoro-btn" data-target="pomodoro-view">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M10 2h4"/></svg>
+                                Pomodoro
+                            </button>
                         </li>
                     </ul>
                 </nav>
 
                 <div class="sidebar-footer">
-                    <button id="logout-btn" class="minimal-btn">Log Out</button>
+                    <button type="button" id="logout-btn" class="btn btn-ghost">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                        Log out
+                    </button>
                 </div>
             </aside>
-            <main id="main-content" class="main-workspace">
-                
-                <div id="tasks-view" class="spa-view">
-                    <section class="task-board">
-                        <header class="workspace-header">
-                            <h1>Workspace <span>/</span> Active Tasks</h1>
-                        </header>
 
-                        <div class="task-input-area workspace-input">
-                            <div class="input-wrapper">
-                                <input type="text" id="new-task-title" placeholder="What needs to be done?" autocomplete="off" />
-                                <input type="text" id="new-task-desc" placeholder="Add description..." autocomplete="off" />
-                            </div>
-                            <button id="add-task-btn" class="add-btn minimal-primary-btn">Save Task</button>
-                        </div>
+            <main class="main">
 
-                        <div id="task-list" class="task-list">
-                            <!-- Tasks will be rendered here -->
-                        </div>
-                    </section>
-                </div>
+                <section id="tasks-view" class="view spa-view">
+                    <header class="view-header">
+                        <h1 class="view-title">Tasks</h1>
+                        <p id="task-summary" class="view-subtitle"></p>
+                    </header>
 
-                <div id="pomodoro-view" class="spa-view hidden pomodoro-board">
-                    <div class="timer-container">
-                        <div class="choose-pomodoro" id="task-selector-container"></div>
-                        <h1 id="timer-display" class="timer-display" title="Click to set time">25:00</h1>
-                        <div id="timer-edit-area" class="timer-input-area hidden">
-                            <input type="number" id="timer-input-minutes" min="1" max="120" value="25">
-                            <span>min</span>
-                            <button id="timer-set-btn" class="minimal-btn">Set</button>
+                    <form id="new-task-form" class="task-composer" novalidate>
+                        <div class="task-composer-fields">
+                            <input type="text" id="new-task-title" class="composer-title" placeholder="What needs to be done?" maxlength="200" autocomplete="off" aria-label="Task title">
+                            <input type="text" id="new-task-desc" class="composer-desc" placeholder="Add a description (optional)" maxlength="2000" autocomplete="off" aria-label="Task description">
                         </div>
-                        <div class="timer-controls">
-                            <button id="timer-start-btn" class="minimal-primary-btn">Start</button>
-                            <button id="timer-pause-btn" class="minimal-btn hidden">Pause</button>
-                            <button id="timer-save-btn" class="minimal-btn hidden">Save</button>
-                        </div>
+                        <button type="submit" id="add-task-btn" class="btn btn-primary">Add task</button>
+                    </form>
+
+                    <div id="task-list"></div>
+                    <div id="task-empty" class="empty-state hidden">
+                        <strong>No tasks yet</strong>
+                        Add your first task above.
                     </div>
-                </div>
+                </section>
+
+                <section id="pomodoro-view" class="view spa-view hidden">
+                    <header class="view-header">
+                        <h1 class="view-title">Pomodoro</h1>
+                        <p class="view-subtitle">Pick a task and focus. The session is saved when the timer ends.</p>
+                    </header>
+
+                    <div class="timer-card">
+                        <div class="field">
+                            <span class="field-label">Focus on</span>
+                            <div id="task-selector-container"></div>
+                        </div>
+
+                        <button type="button" id="timer-display" class="timer-display" title="Click to change the duration">25:00</button>
+                        <div class="timer-progress"><div id="timer-progress-bar" class="timer-progress-bar"></div></div>
+
+                        <div id="timer-edit-area" class="timer-edit hidden">
+                            <input type="number" id="timer-input-minutes" class="input" min="1" max="120" value="25" aria-label="Duration in minutes">
+                            <span class="text-secondary">min</span>
+                            <button type="button" id="timer-set-btn" class="btn btn-secondary">Set</button>
+                        </div>
+
+                        <div class="timer-controls">
+                            <button type="button" id="timer-start-btn" class="btn btn-primary">Start</button>
+                            <button type="button" id="timer-pause-btn" class="btn btn-secondary hidden">Pause</button>
+                            <button type="button" id="timer-save-btn" class="btn btn-ghost hidden">Finish &amp; save</button>
+                        </div>
+
+                        <p class="timer-hint">Click the time to change the duration.</p>
+                    </div>
+                </section>
 
             </main>
         </div>
     </div>
 
+    <!-- ========== Dialogs ========== -->
 
-    <div id="profile-overlay" class="overlay hidden">
-        <div class="profile-modal" style="background-color: var(--bg-sidebar); border: 1px solid var(--border-color);">
-            <button id="close-profile-btn" class="close-btn" style="color: var(--text-secondary);">&times;</button>
-            
-            <div class="profile-content">
-                <img id="profile-avatar-img" src="assets/profile/user.png" alt="User Avatar Large" class="profile-avatar-large">
-                <h3 id="profile-username">Loading...</h3>
-                <p id="profile-email" style="color: var(--text-muted);">No email provided</p>
+    <dialog id="task-dialog" class="dialog" aria-labelledby="task-dialog-title-text">
+        <form id="task-dialog-form" novalidate>
+            <header class="dialog-header">
+                <h2 id="task-dialog-title-text" class="dialog-title">Edit task</h2>
+                <button type="button" class="icon-btn" data-close aria-label="Close">&times;</button>
+            </header>
+            <div class="dialog-body">
+                <label class="field">
+                    <span class="field-label">Title</span>
+                    <input type="text" name="title" class="input" maxlength="200" autocomplete="off">
+                    <span class="field-error" data-error-for="title"></span>
+                </label>
+                <label class="field">
+                    <span class="field-label">Description</span>
+                    <textarea name="description" class="input" rows="4" maxlength="2000"></textarea>
+                    <span class="field-error" data-error-for="description"></span>
+                </label>
+                <label class="checkbox-field">
+                    <input type="checkbox" name="completed">
+                    <span>Completed</span>
+                </label>
+                <p id="task-dialog-error" class="form-error" role="alert"></p>
+            </div>
+            <footer class="dialog-footer">
+                <button type="button" class="btn btn-ghost" data-close>Cancel</button>
+                <button type="submit" id="task-dialog-save" class="btn btn-primary">Save changes</button>
+            </footer>
+        </form>
+    </dialog>
+
+    <dialog id="confirm-dialog" class="dialog dialog-sm" aria-labelledby="confirm-title">
+        <form method="dialog">
+            <div class="dialog-body">
+                <h2 id="confirm-title" class="dialog-title"></h2>
+                <p id="confirm-message" class="text-secondary"></p>
+            </div>
+            <footer class="dialog-footer">
+                <button type="submit" value="cancel" class="btn btn-ghost">Cancel</button>
+                <button type="submit" value="confirm" id="confirm-ok" class="btn btn-primary">Confirm</button>
+            </footer>
+        </form>
+    </dialog>
+
+    <dialog id="profile-dialog" class="dialog" aria-labelledby="profile-username">
+        <header class="dialog-header">
+            <h2 class="dialog-title">Profile</h2>
+            <button type="button" id="close-profile-btn" class="icon-btn" data-close aria-label="Close">&times;</button>
+        </header>
+        <div class="dialog-body">
+            <div class="profile-summary">
+                <img id="profile-avatar-img" src="assets/profile/user.png" alt="" class="avatar avatar-lg">
+                <div>
+                    <h3 id="profile-username">Loading…</h3>
+                    <p id="profile-email">No email provided</p>
+                </div>
             </div>
 
-            <div class="profile-actions" id="profile-actions-container">
-                <form id="profile-update-form" style="margin-bottom: 15px;">
-                    <div class="input-group">
-                        <input type="email" id="update-email" placeholder="New Email" style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px; border-radius: 4px;">
-                        <input type="text" id="update-avatar" placeholder="New Avatar URL" style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px; border-radius: 4px;">
-                    </div>
-                    <button type="submit" class="minimal-primary-btn" style="width: 100%; margin-top: 10px;">Update Profile</button>
-                    <p id="profile-error-msg" style="color: #ff5555; font-size: 12px; margin-top: 5px;"></p>
-                </form>
+            <form id="profile-update-form" class="profile-form">
+                <h4 class="profile-form-title">Profile details</h4>
+                <label class="field">
+                    <span class="field-label">Email</span>
+                    <input type="email" id="update-email" class="input" placeholder="name@example.com" autocomplete="email">
+                </label>
+                <label class="field">
+                    <span class="field-label">Avatar URL</span>
+                    <input type="url" id="update-avatar" class="input" placeholder="https://…" maxlength="500">
+                </label>
+                <p id="profile-error-msg" class="form-error" role="alert"></p>
+                <button type="submit" class="btn btn-secondary">Update profile</button>
+            </form>
 
-                <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 15px 0;">
-
-                <form id="password-update-form">
-                    <div class="input-group">
-                        <input type="password" id="old-password" placeholder="Current Password" required style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px; border-radius: 4px;">
-                        <input type="password" id="new-password" placeholder="New Password" minlength="8" required style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-primary); padding: 8px; border-radius: 4px;">
-                    </div>
-                    <button type="submit" class="minimal-primary-btn" style="width: 100%; margin-top: 10px;">Change Password</button>
-                    <p id="password-error-msg" style="color: #ff5555; font-size: 12px; margin-top: 5px;"></p>
-                </form>
-            </div>
+            <form id="password-update-form" class="profile-form">
+                <h4 class="profile-form-title">Change password</h4>
+                <label class="field">
+                    <span class="field-label">Current password</span>
+                    <input type="password" id="old-password" class="input" required autocomplete="current-password">
+                </label>
+                <label class="field">
+                    <span class="field-label">New password</span>
+                    <input type="password" id="new-password" class="input" minlength="8" required autocomplete="new-password">
+                    <span class="field-hint">At least 8 characters</span>
+                </label>
+                <p id="password-error-msg" class="form-error" role="alert"></p>
+                <button type="submit" class="btn btn-secondary">Change password</button>
+            </form>
         </div>
-    </div>
+    </dialog>
+
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
 </body>
 </html>

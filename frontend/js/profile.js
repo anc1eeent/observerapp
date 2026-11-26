@@ -1,69 +1,10 @@
+/**
+ * Profile dialog: shows the current user and lets them change
+ * the email, the avatar and the password.
+ * The sidebar shows the same user, so it is updated together with the dialog.
+ */
 import { API } from "./api.js";
-
-export function setupProfile(){
-  const profileTrigger = document.getElementById("profile-trigger");
-  const profileOverlay = document.getElementById("profile-overlay");
-  const closeProfileBtn = document.getElementById("close-profile-btn");
-  const updateProfile = document.getElementById("profile-update-form");
-  const updatePassword = document.getElementById("password-update-form");
-  const errorProfile = document.getElementById("profile-error-msg");
-  const errorPassword = document.getElementById("password-error-msg");
-
-  profileTrigger.addEventListener("click", () => {
-    profileOverlay.classList.remove("hidden");
-  });
-
-  closeProfileBtn.addEventListener("click", () => {
-    profileOverlay.classList.add("hidden");
-  });
-
-  profileOverlay.addEventListener("click", (event) => {
-    if (event.target === profileOverlay){
-      profileOverlay.classList.add("hidden");
-    }
-  });
-
-  updateProfile.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    errorProfile.textContent = "";
-    
-    const emailValue = document.getElementById("update-email").value.trim();
-    const avatarValue = document.getElementById("update-avatar").value.trim();
-
-    const updateBody = {};
-    if (emailValue) updateBody.email = emailValue;
-    if (avatarValue) updateBody.avatar_url = avatarValue;
-
-    try{
-      await API.request("/users/me/profile", "PATCH", updateBody);
-      loadProfile();
-      document.getElementById("update-email").value = "";
-      document.getElementById("update-avatar").value = "";
-    } catch (error){
-      errorProfile.textContent = error.message;
-    }
-  });
-
-  updatePassword.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    errorPassword.textContent = "";
-
-    const old_password = document.getElementById("old-password").value;
-    const new_password = document.getElementById("new-password").value;
-
-    try {
-      await API.request("/users/me/password", "PATCH", {
-        old_password: old_password,
-        new_password: new_password
-      });
-      document.getElementById("old-password").value = "";
-      document.getElementById("new-password").value = "";
-      alert("Password changed successfully!");
-    } catch (error){
-      errorPassword.textContent = error.message;
-    }
-  });
-}
+import { showSuccess } from "./ui.js";
 
 const DEFAULT_AVATAR = "assets/profile/user.png";
 
@@ -76,22 +17,77 @@ function setAvatar(img, avatarUrl) {
   img.src = avatarUrl || DEFAULT_AVATAR;
 }
 
-/** Loads the current user and fills the profile window and the sidebar. */
-export async function loadProfile(){
+export function setupProfile() {
+  const dialog = document.getElementById("profile-dialog");
+  const updateProfileForm = document.getElementById("profile-update-form");
+  const updatePasswordForm = document.getElementById("password-update-form");
+  const errorProfile = document.getElementById("profile-error-msg");
+  const errorPassword = document.getElementById("password-error-msg");
+
+  document.getElementById("profile-trigger").addEventListener("click", () => {
+    errorProfile.textContent = "";
+    errorPassword.textContent = "";
+    dialog.showModal();
+  });
+
+  updateProfileForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    errorProfile.textContent = "";
+
+    const emailValue = document.getElementById("update-email").value.trim();
+    const avatarValue = document.getElementById("update-avatar").value.trim();
+
+    const updateBody = {};
+    if (emailValue) updateBody.email = emailValue;
+    if (avatarValue) updateBody.avatar_url = avatarValue;
+    if (!Object.keys(updateBody).length) {
+      errorProfile.textContent = "Enter a new email or avatar URL.";
+      return;
+    }
+
+    try {
+      await API.request("/users/me/profile", "PATCH", updateBody);
+      updateProfileForm.reset();
+      await loadProfile();
+      showSuccess("Profile updated.");
+    } catch (error) {
+      errorProfile.textContent = error.message;
+    }
+  });
+
+  updatePasswordForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    errorPassword.textContent = "";
+
+    try {
+      await API.request("/users/me/password", "PATCH", {
+        old_password: document.getElementById("old-password").value,
+        new_password: document.getElementById("new-password").value,
+      });
+      updatePasswordForm.reset();
+      showSuccess("Password changed.");
+    } catch (error) {
+      errorPassword.textContent = error.message;
+    }
+  });
+}
+
+/** Loads the current user and fills the profile dialog and the sidebar. */
+export async function loadProfile() {
   const profileUsername = document.getElementById("profile-username");
   const profileEmail = document.getElementById("profile-email");
   const sidebarUsername = document.getElementById("sidebar-username-display");
-  try{
+  try {
     const userData = await API.request("/users/me");
-    if(userData){
+    if (userData) {
       profileUsername.textContent = userData.username;
       profileEmail.textContent = userData.email || "No email provided";
       sidebarUsername.textContent = userData.username;
       setAvatar(document.getElementById("profile-avatar-img"), userData.avatar_url);
       setAvatar(document.getElementById("sidebar-avatar-img"), userData.avatar_url);
     }
-  }catch (error) {
+  } catch (error) {
     profileUsername.textContent = "Error loading";
     sidebarUsername.textContent = "";
   }
-};
+}
