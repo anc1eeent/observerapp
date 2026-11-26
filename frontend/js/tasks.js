@@ -1,4 +1,5 @@
 import { API } from './api.js';
+import { showError } from './ui.js';
 let editingTaskId = null;
 
 export function setupTasks(){
@@ -26,7 +27,7 @@ export function setupTasks(){
         editingTaskId = null;
       }
     } catch (error) {
-      console.error(error);
+      showError(error);
     }
   });
 
@@ -35,8 +36,12 @@ export function setupTasks(){
   taskListContainer.addEventListener("click", async (event) =>{
     if (event.target.classList.contains("delete-task-btn")){
       const taskId = event.target.getAttribute("data-id");
+      try {
         await API.request(`/tasks/${taskId}`, "DELETE");
         loadData();
+      } catch (error) {
+        showError(error);
+      }
     }
     else if (event.target.classList.contains("edit-task-btn")){
       const taskId = event.target.getAttribute("data-id");
@@ -58,7 +63,7 @@ export function setupTasks(){
       loadData(); 
       } catch (error) {
       event.target.checked = !isCompleted;
-      console.error(error);
+      showError(error);
       }
     }
 });
@@ -112,6 +117,6 @@ export async function loadData() {
       });
     }
   } catch(error) {
-    console.error(error);
+    showError(error);
   }
 }
