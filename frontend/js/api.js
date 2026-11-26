@@ -59,10 +59,13 @@ async function parseBody(response) {
   }
 }
 
+/** Key in sessionStorage that tells the next page load to explain why the user was logged out. */
+export const SESSION_EXPIRED_KEY = "sessionExpired";
+
 /** Clears the stored token and returns the user to the login screen. */
 export function handleSessionExpired() {
-  alert("Your session has expired. Please log in again.");
   localStorage.removeItem("token");
+  sessionStorage.setItem(SESSION_EXPIRED_KEY, "1");
   location.reload();
 }
 

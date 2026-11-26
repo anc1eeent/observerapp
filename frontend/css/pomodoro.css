@@ -1,21 +1,81 @@
-.pomodoro-view {
-    display: grid;
-    place-items: center; 
-    min-height: 100vh;
-    background-color: #f4f4f9;
+/**
+ * Pomodoro page: task selector, timer and controls.
+ */
+.timer-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    padding: var(--space-6);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background-color: var(--bg-surface);
 }
 
-.timer-container {
-    background: #ffffff;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    text-align: center;
+.timer-card .field {
+    width: 100%;
+    max-width: 360px;
+}
+
+.timer-display {
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 0 var(--space-4);
+    background: transparent;
+    font-size: var(--text-display);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+    cursor: pointer;
+    transition: background-color var(--transition);
+}
+
+.timer-display:hover:not(:disabled) {
+    background-color: var(--bg-hover);
+}
+
+.timer-display:disabled {
+    cursor: default;
+}
+
+.timer-progress {
+    width: 100%;
+    max-width: 360px;
+    height: 4px;
+    border-radius: var(--radius-full);
+    background-color: var(--bg-active);
+    overflow: hidden;
+}
+
+.timer-progress-bar {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background-color: var(--accent);
+    transition: width 1s linear;
+}
+
+.timer-edit {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.timer-edit .input {
+    width: 90px;
 }
 
 .timer-controls {
     display: flex;
-    justify-content: center;
-    gap: 1rem; 
-    margin-top: 1.5rem;
+    gap: var(--space-2);
+}
+
+.timer-controls .btn {
+    min-width: 110px;
+}
+
+.timer-hint {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
 }

@@ -1,0 +1,72 @@
+/**
+ * Design tokens: colors, spacing, typography and shapes.
+ * Every other stylesheet uses only these variables, so the look of the
+ * whole application can be changed in this one file.
+ */
+:root {
+    color-scheme: dark;
+
+    /* Surfaces, from the page background up to raised elements */
+    --bg-app: #18181b;
+    --bg-sidebar: #1c1c1f;
+    --bg-surface: #222226;
+    --bg-elevated: #29292e;
+    --bg-hover: #2e2e34;
+    --bg-active: #36363d;
+    --bg-overlay: rgba(8, 8, 10, 0.65);
+
+    /* Text */
+    --text-primary: #ececf1;
+    --text-secondary: #a1a1aa;
+    --text-muted: #71717a;
+
+    /* Lines */
+    --border: #2e2e34;
+    --border-strong: #3f3f46;
+
+    /* Accent: primary actions, focus and selection */
+    --accent: #8b93ff;
+    --accent-hover: #a0a6ff;
+    --accent-text: #0f1022;
+    --accent-soft: rgba(139, 147, 255, 0.14);
+
+    /* Status */
+    --success: #4ade80;
+    --success-soft: rgba(74, 222, 128, 0.12);
+    --danger: #f87171;
+    --danger-hover: #fb8f8f;
+    --danger-soft: rgba(248, 113, 113, 0.12);
+    --info: #60a5fa;
+    --info-soft: rgba(96, 165, 250, 0.12);
+
+    /* Spacing scale */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+
+    /* Typography */
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --text-xs: 12px;
+    --text-sm: 13px;
+    --text-md: 14px;
+    --text-lg: 16px;
+    --text-xl: 22px;
+    --text-display: 88px;
+
+    /* Shapes and motion */
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 14px;
+    --radius-full: 999px;
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.55);
+    --transition: 150ms ease;
+
+    /* Layout */
+    --sidebar-width: 232px;
+    --content-width: 760px;
+}
