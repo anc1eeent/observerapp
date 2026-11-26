@@ -65,16 +65,33 @@ export function setupProfile(){
   });
 }
 
+const DEFAULT_AVATAR = "assets/profile/user.png";
+
+/** Shows the user's avatar, falling back to the default one if the URL is missing or broken. */
+function setAvatar(img, avatarUrl) {
+  img.onerror = () => {
+    img.onerror = null;
+    img.src = DEFAULT_AVATAR;
+  };
+  img.src = avatarUrl || DEFAULT_AVATAR;
+}
+
+/** Loads the current user and fills the profile window and the sidebar. */
 export async function loadProfile(){
   const profileUsername = document.getElementById("profile-username");
   const profileEmail = document.getElementById("profile-email");
+  const sidebarUsername = document.getElementById("sidebar-username-display");
   try{
     const userData = await API.request("/users/me");
-  if(userData){
-    profileUsername.textContent = userData.username;
-    profileEmail.textContent = userData.email || "No email provided";
-  }  
+    if(userData){
+      profileUsername.textContent = userData.username;
+      profileEmail.textContent = userData.email || "No email provided";
+      sidebarUsername.textContent = userData.username;
+      setAvatar(document.getElementById("profile-avatar-img"), userData.avatar_url);
+      setAvatar(document.getElementById("sidebar-avatar-img"), userData.avatar_url);
+    }
   }catch (error) {
     profileUsername.textContent = "Error loading";
+    sidebarUsername.textContent = "";
   }
 };
