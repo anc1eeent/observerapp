@@ -4,6 +4,15 @@
 
 ObserverTasker is a to-do application where you can organize your day, manage tasks and track focus time with a Pomodoro timer. It is also a learning project to practice backend development and DevOps.
 
+## Features
+
+- **Tasks** with priorities, due dates and descriptions; overdue tasks are highlighted.
+- **Search and sorting** by priority, due date or creation time.
+- **Pomodoro timer** linked to a task; the focus time is shown on each task.
+- **Focus statistics:** today's focus time, the last 7 days as a chart and recent sessions.
+- **Profile** with email, avatar and password change.
+- Input validation on both the frontend and the API, readable error messages.
+
 ## Tech Stack
 
 - **Backend:** FastAPI, SQLAlchemy, Pydantic, Alembic
@@ -24,6 +33,7 @@ src/
 └── habits/          # habit tracking (in progress)
 alembic/             # database migrations
 frontend/            # web interface
+scripts/             # helper scripts (demo data)
 tests/               # API tests
 ```
 
@@ -69,6 +79,14 @@ docker compose ps
 
 The API documentation is available at http://localhost:8000/docs.
 
+### Load Demo Data (optional)
+
+```powershell
+docker compose run --rm api python -m scripts.seed
+```
+
+This creates the user `demo` (password `demo-password`) with tasks and a week of Pomodoro sessions. Running it again replaces the demo data instead of duplicating it.
+
 ### Open the Frontend
 
 The frontend uses ES modules, so it must be served over HTTP:
@@ -86,4 +104,8 @@ Then open http://localhost:5500.
 docker compose run --rm --build api sh -c "pip install -q -r requirements/dev.txt && pytest -q"
 ```
 
-The same tests run in CI on every pull request
+The same tests run in CI on every pull request.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
