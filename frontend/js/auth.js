@@ -1,6 +1,10 @@
-import { API, API_URL } from './api.js';
-
-let isLoginMode = true;
+/**
+ * Login and registration forms.
+ * Both forms use API.request, so errors are handled the same way
+ * as in the rest of the application.
+ */
+import { API } from './api.js';
+import { showError } from './ui.js';
 
 function setAuthMode(isLogin) {
   const loginForm = document.getElementById("login-form");
@@ -20,71 +24,43 @@ export function setupAuth(onLoginSuccess) {
     setAuthMode(false);
   });
 
-  switchToLoginBtn.addEventListener("click", (event) =>{
+  switchToLoginBtn.addEventListener("click", (event) => {
     event.preventDefault();
     setAuthMode(true);
   });
 
-  loginForm.addEventListener("submit", async (event) =>{
+  loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const usernameValue = document.getElementById("login-username").value;
-    const passwordValue = document.getElementById("login-password").value;
+    const username = document.getElementById("login-username").value;
+    const password = document.getElementById("login-password").value;
 
-    const formData = new URLSearchParams();
-    formData.append("username", usernameValue);
-    formData.append("password", passwordValue);
     try {
-    const response = await fetch(API_URL + '/users/login', {
-      method: "POST",
-      body: formData
-    });
-    const data = await response.json();
-    if (response.ok){
+      const data = await API.request("/users/login", "POST", { username, password }, {
+        form: true,
+        expectUnauthorized: true,
+      });
       localStorage.setItem("token", data.access_token);
       onLoginSuccess();
-    }else{
-      alert(data.detail || "Authentication failed");
+    } catch (error) {
+      showError(error);
     }
-  } catch (error) { 
-    console.error("Network error:", error);
-  }
-  })
+  });
 
-registerForm.addEventListener("submit", async (event) =>{
-  event.preventDefault();
-  const usernameValue = document.getElementById("reg-username").value;
-  const passwordValue = document.getElementById("reg-password").value;
-  try{
-    const route = "/users/register";
-    const response = await fetch(API_URL + route , {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        username: usernameValue,
-        password: passwordValue,
-      }),
-    } )
-    const data = await response.json();
-    if (response.ok) {
+  registerForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const username = document.getElementById("reg-username").value;
+    const password = document.getElementById("reg-password").value;
+
+    try {
+      await API.request("/users/register", "POST", { username, password });
       alert("Success! Now log in.");
       setAuthMode(true);
-    } else {
-      alert(data.detail || "Registration failed");
+    } catch (error) {
+      showError(error);
     }
-
-  } catch(error) {
-    console.error("Network error:", error);
-  }
-})
-
+  });
 }
 
 export function checkAuth() {
   return !!localStorage.getItem("token");
-}
-
-export function handleSessionExpired() {
-  alert("Your session has expired. Please log in again.");
-  localStorage.removeItem("token");
-  window.location.reload();
 }

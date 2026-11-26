@@ -1,6 +1,14 @@
 import { API, API_URL } from './api.js';
 import { setCurrentTaskId } from "./pomodoro.js";
 
+/** Shows a failed request to the user. ApiError messages are already readable. */
+export function showError(error) {
+  if (error.handled) {
+    return;
+  }
+  alert(error.message || "Something went wrong. Please try again.");
+}
+
 export function setupNavigation() {
   const navBtns = document.querySelectorAll('.nav-item');
   const spaViews = document.querySelectorAll(".spa-view");
@@ -29,10 +37,14 @@ if (logoutBtn) {
 export function pomodoroPageInit(){
   const pomodoroBtn = document.getElementById("nav-pomodoro-btn");
   if (pomodoroBtn) {
-    pomodoroBtn.addEventListener("click", async (event) => {
-    const tasks = await API.request("/tasks/");
-    renderPomodoroTaskSelector(tasks);
-  });
+    pomodoroBtn.addEventListener("click", async () => {
+      try {
+        const tasks = await API.request("/tasks/");
+        renderPomodoroTaskSelector(tasks);
+      } catch (error) {
+        showError(error);
+      }
+    });
 }
 }
 
