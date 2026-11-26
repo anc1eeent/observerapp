@@ -6,7 +6,7 @@ services:
       - "8000:8000"
     environment:
       ENVIRONMENT: development
-      SECRET_KEY: ${SECRET_KEY?SECRET_KEY is required}
+      SECRET_KEY: ${SECRET_KEY:?SECRET_KEY is required}
       DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
     depends_on:
       - db
@@ -23,4 +23,4 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 volumes:
-  postgres_data:
+  postgres_data:

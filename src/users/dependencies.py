@@ -19,6 +19,9 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
             raise credentials_exception
     except jwt.ExpiredSignatureError:
         raise TokenExpiredException()
+    except jwt.InvalidTokenError:
+        # Forged, malformed or wrongly signed token
+        raise credentials_exception
 
     db_user = db.query(models.User).filter(models.User.username == username).first()
     if db_user is None:

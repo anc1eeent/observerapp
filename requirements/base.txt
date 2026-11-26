@@ -20,6 +20,7 @@ packaging==26.3
 passlib==1.7.4
 psycopg2-binary==2.9.9
 pycparser==3.0
+pydantic-settings==2.16.3
 pydantic==2.13.4
 pydantic_core==2.46.4
 Pygments==2.21.0

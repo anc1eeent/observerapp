@@ -2,17 +2,15 @@
 Security utilities for authentication and authorization.
 Handles password hashing, verification, and JSON Web Token (JWT) generation.
 """
-import os
 import jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta, timezone
-from dotenv import load_dotenv
 
-load_dotenv()
+from src.config import settings
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+SECRET_KEY = settings.secret_key
+ALGORITHM = settings.algorithm
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 # ==========================================
 # PASSWORD HASHING SETUP
@@ -36,4 +34,4 @@ def create_access_token(data:dict):
     expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
+    return encoded_jwt

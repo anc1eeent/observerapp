@@ -30,7 +30,7 @@ def login_user(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = D
 def register_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = service.get_user_by_username(db, user.username)
     if db_user:
-        raise HTTPException(status_code=409, detail="Username alredy registered")
+        raise HTTPException(status_code=409, detail="Username already registered")
     hashed_pw = security.get_password_hash(user.password)
     new_user = service.create_user(db, user, hashed_pw)
     return {"status": "success", "user_id": new_user.id, "username": new_user.username}
