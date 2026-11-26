@@ -1,8 +1,8 @@
 import { setupAuth, checkAuth } from "./auth.js";
 import { setupTasks, loadData } from './tasks.js';
-import { pomodoroPageInit, renderPomodoroTaskSelector, setupNavigation } from "./ui.js";
+import { setupNavigation } from "./ui.js";
 import { setupProfile, loadProfile } from "./profile.js";
-import { setupPomodoro } from "./pomodoro.js";
+import { setupPomodoro, pomodoroPageInit } from "./pomodoro.js";
 
 const authContainer = document.getElementById("auth-container");
 const taskSection = document.getElementById("task-section");
