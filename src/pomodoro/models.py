@@ -4,7 +4,7 @@ This module maps Python classes to database tables using SQLAlchemy ORM.
 """
 
 from src.database import Base
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
 
 class PomodoroStats(Base):
@@ -18,5 +18,7 @@ class PomodoroStats(Base):
     duration_seconds = Column(Integer, nullable=False, default=0)
     task_id = Column(Integer, ForeignKey("tasks.id", ondelete="CASCADE"), nullable=True) 
     description = Column(String, nullable=True)
+    # When the session was saved; used for daily and weekly focus statistics
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
     owner = relationship("User", back_populates="pomodoros")
     task = relationship("Task", back_populates="pomodoros")

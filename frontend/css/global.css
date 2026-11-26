@@ -238,3 +238,66 @@ input[type="checkbox"] {
 .field-error:empty {
     min-height: 0;
 }
+
+.input-sm {
+    width: auto;
+    padding: 6px 10px;
+    font-size: var(--text-sm);
+}
+
+/* Date pickers follow the dark theme */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+    cursor: pointer;
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+}
+
+/* ---------- Chips: small labels on task cards ---------- */
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 1px var(--space-2);
+    border-radius: var(--radius-full);
+    background-color: var(--bg-active);
+    color: var(--text-secondary);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.chip svg {
+    width: 12px;
+    height: 12px;
+}
+
+.chip-priority-high,
+.chip-due-overdue {
+    background-color: var(--danger-soft);
+    color: var(--danger);
+}
+
+.chip-priority-low {
+    color: var(--text-muted);
+}
+
+.chip-due-today {
+    background-color: var(--warning-soft);
+    color: var(--warning);
+}
+
+.chip-due-soon {
+    background-color: var(--info-soft);
+    color: var(--info);
+}
+
+.chip-focus {
+    background-color: var(--accent-soft);
+    color: var(--accent);
+}
